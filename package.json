@@ -1,0 +1,26 @@
+{
+  "name": "web-midi-test",
+  "version": "0.0.0",
+  "description": "coming soon",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc mocha",
+    "lint": "eslint",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "author": "jazz-soft (https://jazz-soft.net/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jazz-soft/web-midi-test.git"
+  },
+  "homepage": "https://github.com/jazz-soft/web-midi-test#readme",
+  "bugs": "https://github.com/jazz-soft/web-midi-test/issues",
+  "license": "MIT",
+  "devDependencies": {
+    "coveralls": "^3.0.3",
+    "eslint": "^5.16.0",
+    "jzz": "^0.7.7",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1"
+  }
+}
