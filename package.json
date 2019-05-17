@@ -1,11 +1,11 @@
 {
   "name": "web-midi-test",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "coming soon",
   "main": "wmt.js",
   "scripts": {
     "test": "nyc mocha",
-    "lint": "eslint",
+    "lint": "eslint wmt.js test",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "jazz-soft (https://jazz-soft.net/)",

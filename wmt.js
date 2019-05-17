@@ -3,6 +3,11 @@ function _readonly(obj, name, val) {
 }
 
 class MIDIAccess {
+  constructor(sysex) {
+    _readonly(this, 'inputs', []);
+    _readonly(this, 'outputs', []);
+    _readonly(this, 'sysexEnabled', sysex);
+  }
 }
 
 class DOMException {
@@ -16,13 +21,19 @@ class DOMException {
 var _midi = true;
 var _sysex = true;
 
-function requestMIDIAccess() {
+function requestMIDIAccess(arg) {
+  var sysex = !!(arg && arg.sysex);
   return new Promise((resolve, reject) => {
     if (_midi) {
-      resolve(new MIDIAccess());
+      if (sysex && !_sysex) {
+        reject(new DOMException('SecurityError', 'Sysex is not allowed', 18));
+      }
+      else {
+        resolve(new MIDIAccess(sysex));
+      }
     }
     else {
-      reject(new DOMException('Error', 'Coming soon...', 9));
+      reject(new DOMException('SecurityError', 'MIDI is not allowed', 18));
     }
   });
 }
