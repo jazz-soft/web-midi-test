@@ -18,6 +18,12 @@ module.exports = {
       "rules": {
         "no-console" : "off"
       }
+    },
+    {
+      "files": ["wmt.js"],
+      "rules": {
+        "no-constant-condition" : ["error", { "checkLoops": false }]
+      }
     }
   ]
 };

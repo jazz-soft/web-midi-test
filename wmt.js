@@ -2,24 +2,139 @@ function _readonly(obj, name, val) {
   Object.defineProperty(obj, name, { get: function() { return val; }, enumerable: true });
 }
 
+var _Acc = [];
+var _Src = {};
+var _Dst = {};
+
+function MIDIMessageEvent(arr) {
+  this.data = arr;
+  Object.freeze(this);
+}
+
 function MidiSrc(name, man, ver) {
   if (!(this instanceof MidiSrc)) return new MidiSrc(name, man, ver);
   _readonly(this, 'name', '' + name);
   _readonly(this, 'manufacturer', '' + man);
   _readonly(this, 'version', '' + ver);
+  var id;
+  for (var n = 0; true; n++) {
+    id = this.name + '/' + n;
+    if (!_Src[id]) {
+      _readonly(this, 'id', id);
+      _Src[id] = { port: this, connected: false, ports: [] };
+      break;
+    }
+  }
+  Object.defineProperty(this, 'connected', { get: function() { return _Src[id].connected; }, enumerable: true });
+  Object.freeze(this);
+}
+
+MidiSrc.prototype.connect = function() {
+  if (!_Src[this.id].connected) {
+    _Src[this.id].connected = true;
+  }
+}
+
+MidiSrc.prototype.disconnect = function() {
+  if (_Src[this.id].connected) {
+    _Src[this.id].connected = false;
+  }
+}
+
+MidiSrc.prototype.emit = function(arr) {
+  for (var i = 0; i < _Src[this.id].ports.length; i++) {
+    _Src[this.id].ports[i].onmidimessage(new MIDIMessageEvent(arr));
+  }
 }
 
 function MidiDst(name, man, ver) {
-  if (!(this instanceof MidiSrc)) return new MidiSrc(name, man, ver);
+  if (!(this instanceof MidiDst)) return new MidiDst(name, man, ver);
   _readonly(this, 'name', '' + name);
   _readonly(this, 'manufacturer', '' + man);
   _readonly(this, 'version', '' + ver);
+  var id;
+  for (var n = 0; true; n++) {
+    id = this.name + '/' + n;
+    if (!_Dst[id]) {
+      _readonly(this, 'id', id);
+      _Dst[id] = { port: this, connected: false, ports: [] };
+      break;
+    }
+  }
+  this.receive = _doNothing;
+  Object.defineProperty(this, 'connected', { get: function() { return _Dst[id].connected; }, enumerable: true });
+  Object.seal(this);
+}
+
+MidiDst.prototype.connect = function() {
+  if (!_Dst[this.id].connected) {
+    _Dst[this.id].connected = true;
+  }
+}
+
+MidiDst.prototype.disconnect = function() {
+  if (_Dst[this.id].connected) {
+    _Dst[this.id].connected = false;
+  }
+}
+
+function _doNothing() {}
+
+function MIDIInput(port) {
+  this.id = port.id;
+  this.name = port.name;
+  this.manufacturer = port.manufacturer;
+  this.version = port.version;
+  this.onmidimessage = _doNothing;
+}
+
+function MIDIOutput(port) {
+  this.id = port.id;
+  this.name = port.name;
+  this.manufacturer = port.manufacturer;
+  this.version = port.version;
+  this.send = function(arr) { port.receive(arr); };
+  this.close = function() {};
+}
+
+function MIDIInputMap(_inputs) {
+  this.forEach = function(fun) {
+    for (var id in _Src) {
+      if (_Src.hasOwnProperty(id) && _Src[id].connected) {
+        if (!_inputs[id]) {
+          _inputs[id] = new MIDIInput(_Src[id].port);
+          _Src[id].ports.push(_inputs[id]);
+        }
+        fun(_inputs[id], id);
+      }
+    }
+  }
+  Object.freeze(this);
+}
+
+function MIDIOutputMap(_outputs) {
+  this.forEach = function(fun) {
+    for (var id in _Dst) {
+      if (_Dst.hasOwnProperty(id) && _Dst[id].connected) {
+        if (!_outputs[id]) {
+          _outputs[id] = new MIDIOutput(_Dst[id].port);
+          _Dst[id].ports.push(_outputs[id]);
+        }
+        fun(_outputs[id], id);
+      }
+    }
+  }
+  Object.freeze(this);
 }
 
 function MIDIAccess(sysex) {
-  _readonly(this, 'inputs', []);
-  _readonly(this, 'outputs', []);
-  _readonly(this, 'sysexEnabled', sysex);
+  var _inputs = {};
+  var _outputs = {};
+  this.sysexEnabled = sysex;
+  this.inputs = new MIDIInputMap(_inputs);
+  this.outputs = new MIDIOutputMap(_outputs);
+  Object.freeze(this);
+  _Acc.push(this);
 }
 
 function DOMException(name, message, code) {
