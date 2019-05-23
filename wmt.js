@@ -95,6 +95,7 @@ function MIDIOutput(port) {
   this.version = port.version;
   this.send = function(arr) { port.receive(arr); };
   this.close = function() {};
+  this.clear = function() {};
 }
 
 function MIDIInputMap(_inputs) {
