@@ -43,20 +43,21 @@ describe('midi: true; sysex: true', function() {
   });
 });
 
-describe('Virtual MIDI-In', function() {
+describe('MIDI-In', function() {
   WMT.midi = true;
   WMT.sysex = true;
   var name = 'Virtual MIDI-In';
-  var midiin = new WMT.MidiSrc(name);
+  var midiin = WMT.MidiSrc(name); // should work with or without 'new'
   midiin.connect();
-  it('port is visible', function(done) {
+  it('port is listed in MIDIInputMap', function(done) {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.inputs.forEach((port) => {
+        assert.equal(port.type, 'input');
         if (port.name == name) done();
       });
     }, () => {});
   });
-  it('receive MIDI message', function(done) {
+  it('receive MIDI message from MIDIInput', function(done) {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.inputs.forEach((port) => {
         if (port.name == name) port.onmidimessage = () => { port.onmidimessage = () => {}; done(); };
@@ -64,27 +65,62 @@ describe('Virtual MIDI-In', function() {
       setTimeout(() => { midiin.emit([0x90, 0x40, 0x7f]); }, 20);
     }, () => {});
   });
+  it('connect new MIDIInput', function(done) {
+    var name = 'Virtual MIDI-In to connect';
+    var midiin = new WMT.MidiSrc(name);
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.onstatechange = () => { midi.onstatechange = () => {}; midiin.disconnect(); done(); };
+      setTimeout(() => { midiin.connect(); }, 20);
+    }, () => {});
+  });
+  it('disconnect existing MIDIInput', function(done) {
+    var name = 'Virtual MIDI-In to disconnect';
+    var midiin = new WMT.MidiSrc(name);
+    midiin.connect();
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.onstatechange = () => { midi.onstatechange = () => {}; done(); };
+      setTimeout(() => { midiin.disconnect(); }, 20);
+    }, () => {});
+  });
 });
 
-describe('Virtual MIDI-Out', function() {
+describe('MIDI-Out', function() {
   WMT.midi = true;
   WMT.sysex = true;
   var name = 'Virtual MIDI-Out';
-  var midiout = new WMT.MidiDst(name);
+  var midiout = WMT.MidiDst(name); // should work with or without 'new'
   midiout.connect();
-  it('port is visible', function(done) {
+  it('port is listed in MIDIOutputMap', function(done) {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.outputs.forEach((port) => {
+        assert.equal(port.type, 'output');
         if (port.name == name) done();
       });
     }, () => {});
   });
-  it('send MIDI message', function(done) {
+  it('send MIDI message to MIDIOutput', function(done) {
     midiout.receive = () => { midiout.receive = () => {}; done(); };
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.outputs.forEach((port) => {
         if (port.name == name) { port.send([0x90, 0x40, 0x7f]); port.clear(); }
       });
+    }, () => {});
+  });
+  it('connect new MIDIOutput', function(done) {
+    var name = 'Virtual MIDI-Out to connect';
+    var midiout = new WMT.MidiDst(name);
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.onstatechange = () => { midi.onstatechange = () => {}; midiout.disconnect(); done(); };
+      setTimeout(() => { midiout.connect(); }, 20);
+    }, () => {});
+  });
+  it('disconnect existing MIDIOutput', function(done) {
+    var name = 'Virtual MIDI-Out to disconnect';
+    var midiout = new WMT.MidiDst(name);
+    midiout.connect();
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.onstatechange = () => { midi.onstatechange = () => {}; done(); };
+      setTimeout(() => { midiout.disconnect(); }, 20);
     }, () => {});
   });
 });

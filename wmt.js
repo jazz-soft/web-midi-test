@@ -32,12 +32,20 @@ function MidiSrc(name, man, ver) {
 MidiSrc.prototype.connect = function() {
   if (!_Src[this.id].connected) {
     _Src[this.id].connected = true;
+    for (var i = 0; i < _Acc.length; i++) {
+      var evt = new MIDIConnectionEvent(_Acc[i], this);
+      _Acc[i].onstatechange(evt);
+    }
   }
 }
 
 MidiSrc.prototype.disconnect = function() {
   if (_Src[this.id].connected) {
     _Src[this.id].connected = false;
+    for (var i = 0; i < _Acc.length; i++) {
+      var evt = new MIDIConnectionEvent(_Acc[i], this);
+      _Acc[i].onstatechange(evt);
+    }
   }
 }
 
@@ -69,33 +77,46 @@ function MidiDst(name, man, ver) {
 MidiDst.prototype.connect = function() {
   if (!_Dst[this.id].connected) {
     _Dst[this.id].connected = true;
+    for (var i = 0; i < _Acc.length; i++) {
+      var evt = new MIDIConnectionEvent(_Acc[i], this);
+      _Acc[i].onstatechange(evt);
+    }
   }
 }
 
 MidiDst.prototype.disconnect = function() {
   if (_Dst[this.id].connected) {
     _Dst[this.id].connected = false;
+    for (var i = 0; i < _Acc.length; i++) {
+      var evt = new MIDIConnectionEvent(_Acc[i], this);
+      _Acc[i].onstatechange(evt);
+    }
   }
 }
 
 function _doNothing() {}
 
+function MIDIConnectionEvent(access, connection) {
+}
+
 function MIDIInput(port) {
-  this.id = port.id;
-  this.name = port.name;
-  this.manufacturer = port.manufacturer;
-  this.version = port.version;
+  _readonly(this, 'type', 'input');
+  _readonly(this, 'id', port.id);
+  _readonly(this, 'name', port.name);
+  _readonly(this, 'manufacturer', port.manufacturer);
+  _readonly(this, 'version', port.version);
   this.onmidimessage = _doNothing;
 }
 
 function MIDIOutput(port) {
-  this.id = port.id;
-  this.name = port.name;
-  this.manufacturer = port.manufacturer;
-  this.version = port.version;
+  _readonly(this, 'type', 'output');
+  _readonly(this, 'id', port.id);
+  _readonly(this, 'name', port.name);
+  _readonly(this, 'manufacturer', port.manufacturer);
+  _readonly(this, 'version', port.version);
   this.send = function(arr) { port.receive(arr); };
-  this.close = function() {};
-  this.clear = function() {};
+  this.close = _doNothing;
+  this.clear = _doNothing;
 }
 
 function MIDIInputMap(_inputs) {
@@ -131,9 +152,11 @@ function MIDIOutputMap(_outputs) {
 function MIDIAccess(sysex) {
   var _inputs = {};
   var _outputs = {};
+  var _onstatechange = _doNothing
   this.sysexEnabled = sysex;
   this.inputs = new MIDIInputMap(_inputs);
   this.outputs = new MIDIOutputMap(_outputs);
+  Object.defineProperty(this, 'onstatechange', { get: function() { return _onstatechange; }, set: function(f) { _onstatechange = f; }, enumerable: true });
   Object.freeze(this);
   _Acc.push(this);
 }
