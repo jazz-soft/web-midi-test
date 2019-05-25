@@ -1,6 +1,6 @@
 {
   "name": "web-midi-test",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "coming soon",
   "main": "wmt.js",
   "scripts": {
@@ -8,18 +8,26 @@
     "lint": "eslint wmt.js test",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
+  "keywords": [
+    "midi",
+    "web-midi",
+    "web-midi-api",
+    "webmidi",
+    "webmidiapi",
+    "test"
+  ],
   "author": "jazz-soft (https://jazz-soft.net/)",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jazz-soft/web-midi-test.git"
-  },
-  "homepage": "https://github.com/jazz-soft/web-midi-test#readme",
-  "bugs": "https://github.com/jazz-soft/web-midi-test/issues",
-  "license": "MIT",
   "devDependencies": {
     "coveralls": "^3.0.3",
     "eslint": "^5.16.0",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jazz-soft/web-midi-test.git"
+  },
+  "homepage": "https://jazz-soft.net",
+  "bugs": "https://github.com/jazz-soft/web-midi-test/issues",
+  "license": "MIT"
 }

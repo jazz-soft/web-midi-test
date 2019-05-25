@@ -33,8 +33,10 @@ MidiSrc.prototype.connect = function() {
   if (!_Src[this.id].connected) {
     _Src[this.id].connected = true;
     for (var i = 0; i < _Acc.length; i++) {
-      var evt = new MIDIConnectionEvent(_Acc[i], this);
-      _Acc[i].onstatechange(evt);
+      if (_Acc[i].onstatechange) {
+        var evt = new MIDIConnectionEvent(_Acc[i], this);
+        _Acc[i].onstatechange(evt);
+      }
     }
   }
 }
@@ -43,15 +45,19 @@ MidiSrc.prototype.disconnect = function() {
   if (_Src[this.id].connected) {
     _Src[this.id].connected = false;
     for (var i = 0; i < _Acc.length; i++) {
-      var evt = new MIDIConnectionEvent(_Acc[i], this);
-      _Acc[i].onstatechange(evt);
+      if (_Acc[i].onstatechange) {
+        var evt = new MIDIConnectionEvent(_Acc[i], this);
+        _Acc[i].onstatechange(evt);
+      }
     }
   }
 }
 
 MidiSrc.prototype.emit = function(arr) {
   for (var i = 0; i < _Src[this.id].ports.length; i++) {
-    _Src[this.id].ports[i].onmidimessage(new MIDIMessageEvent(arr));
+    if (_Src[this.id].ports[i].onmidimessage) {
+      _Src[this.id].ports[i].onmidimessage(new MIDIMessageEvent(arr));
+    }
   }
 }
 
@@ -78,8 +84,10 @@ MidiDst.prototype.connect = function() {
   if (!_Dst[this.id].connected) {
     _Dst[this.id].connected = true;
     for (var i = 0; i < _Acc.length; i++) {
-      var evt = new MIDIConnectionEvent(_Acc[i], this);
-      _Acc[i].onstatechange(evt);
+      if (_Acc[i].onstatechange) {
+        var evt = new MIDIConnectionEvent(_Acc[i], this);
+        _Acc[i].onstatechange(evt);
+      }
     }
   }
 }
@@ -88,8 +96,10 @@ MidiDst.prototype.disconnect = function() {
   if (_Dst[this.id].connected) {
     _Dst[this.id].connected = false;
     for (var i = 0; i < _Acc.length; i++) {
-      var evt = new MIDIConnectionEvent(_Acc[i], this);
-      _Acc[i].onstatechange(evt);
+      if (_Acc[i].onstatechange) {
+        var evt = new MIDIConnectionEvent(_Acc[i], this);
+        _Acc[i].onstatechange(evt);
+      }
     }
   }
 }
@@ -100,15 +110,28 @@ function MIDIConnectionEvent(access, connection) {
 }
 
 function MIDIInput(port) {
+  var _onmidimessage;
+  var _onstatechange;
   _readonly(this, 'type', 'input');
   _readonly(this, 'id', port.id);
   _readonly(this, 'name', port.name);
   _readonly(this, 'manufacturer', port.manufacturer);
   _readonly(this, 'version', port.version);
-  this.onmidimessage = _doNothing;
+  Object.defineProperty(this, 'onmidimessage', {
+    get: function() { return _onmidimessage; },
+    set: function(f) { _onmidimessage = f instanceof Function ? f : undefined; },
+    enumerable: true
+  });
+  Object.defineProperty(this, 'onstatechange', {
+    get: function() { return _onstatechange; },
+    set: function(f) { _onstatechange = f instanceof Function ? f : undefined; },
+    enumerable: true
+  });
+  Object.freeze(this);
 }
 
 function MIDIOutput(port) {
+  var _onstatechange;
   _readonly(this, 'type', 'output');
   _readonly(this, 'id', port.id);
   _readonly(this, 'name', port.name);
@@ -117,6 +140,12 @@ function MIDIOutput(port) {
   this.send = function(arr) { port.receive(arr); };
   this.close = _doNothing;
   this.clear = _doNothing;
+  Object.defineProperty(this, 'onstatechange', {
+    get: function() { return _onstatechange; },
+    set: function(f) { _onstatechange = f instanceof Function ? f : undefined; },
+    enumerable: true
+  });
+  Object.freeze(this);
 }
 
 function MIDIInputMap(_inputs) {
@@ -152,11 +181,15 @@ function MIDIOutputMap(_outputs) {
 function MIDIAccess(sysex) {
   var _inputs = {};
   var _outputs = {};
-  var _onstatechange = _doNothing
+  var _onstatechange;
   this.sysexEnabled = sysex;
   this.inputs = new MIDIInputMap(_inputs);
   this.outputs = new MIDIOutputMap(_outputs);
-  Object.defineProperty(this, 'onstatechange', { get: function() { return _onstatechange; }, set: function(f) { _onstatechange = f; }, enumerable: true });
+  Object.defineProperty(this, 'onstatechange', {
+    get: function() { return _onstatechange; },
+    set: function(f) { _onstatechange = f instanceof Function ? f : undefined; },
+    enumerable: true
+  });
   Object.freeze(this);
   _Acc.push(this);
 }
