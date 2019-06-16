@@ -7,6 +7,48 @@
 
 coming soon...
 
+## Virtual Web MIDI API for testing Web MIDI applications
+
 See also: [**Web MIDI API**](https://webaudio.github.io/web-midi-api/)
 
 See also: [**midi-test**](https://github.com/jazz-soft/midi-test)
+
+Install: `npm install web-midi-test --save-dev`
+
+## API
+### MIDI access
+
+    var WMT = require('web-midi-test');
+    function onSuccess() { console.log('Success!'); }
+    function onFail() { console.log('Fail!'); }
+    
+    // normal scenario
+    WMT.requestMIDIAccess().then(onSuccess, onFail); // Success!
+    WMT.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail); // Success!
+    
+    // no sysex permission scenario
+    WMT.sysex = false;
+    WMT.requestMIDIAccess().then(onSuccess, onFail); // Success!
+    WMT.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail); // Fail!
+    
+    // no midi permission scenario
+    WMT.midi = false;
+    WMT.requestMIDIAccess().then(onSuccess, onFail); // Fail!
+
+### MIDI Source (Virtual MIDI-In)
+
+    var WMT = require('web-midi-test');
+    var port = new WMT.MidiSrc('VIRTUAL MIDI-In');
+    port.connect();
+    port.emit([0x90, 0x40, 0x7f]);
+    //...
+    port.disconnect();
+
+### MIDI Destination (Virtual MIDI-Out)
+
+    var WMT = require('web-midi-test');
+    var port = new WMT.MidiDst('VIRTUAL MIDI-Out');
+    port.receive = function(msg) { console.log('received:', msg); };
+    port.connect();
+    //...
+    port.disconnect();
