@@ -53,7 +53,9 @@ describe('MIDI-In', function() {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.inputs.forEach((port) => {
         assert.equal(port.type, 'input');
-        if (port.name == name) done();
+        if (port.name == name) {
+          done();
+        }
       });
     }, () => {});
   });
@@ -69,7 +71,11 @@ describe('MIDI-In', function() {
     var name = 'Virtual MIDI-In to connect';
     var midiin = new WMT.MidiSrc(name);
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
-      midi.onstatechange = () => { midi.onstatechange = () => {}; midiin.disconnect(); done(); };
+      midi.onstatechange = () => {
+        midi.onstatechange = () => {};
+        midiin.disconnect();
+        done();
+      };
       setTimeout(() => { midiin.connect(); }, 20);
     }, () => {});
   });
@@ -78,7 +84,10 @@ describe('MIDI-In', function() {
     var midiin = new WMT.MidiSrc(name);
     midiin.connect();
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
-      midi.onstatechange = () => { midi.onstatechange = () => {}; done(); };
+      midi.onstatechange = () => {
+        midi.onstatechange = () => {};
+        done();
+      };
       setTimeout(() => { midiin.disconnect(); }, 20);
     }, () => {});
   });
@@ -94,7 +103,9 @@ describe('MIDI-Out', function() {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.outputs.forEach((port) => {
         assert.equal(port.type, 'output');
-        if (port.name == name) done();
+        if (port.name == name) {
+          done();
+        }
       });
     }, () => {});
   });
@@ -110,7 +121,11 @@ describe('MIDI-Out', function() {
     var name = 'Virtual MIDI-Out to connect';
     var midiout = new WMT.MidiDst(name);
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
-      midi.onstatechange = () => { midi.onstatechange = () => {}; midiout.disconnect(); done(); };
+      midi.onstatechange = () => {
+        midi.onstatechange = () => {};
+        midiout.disconnect();
+        done();
+      };
       setTimeout(() => { midiout.connect(); }, 20);
     }, () => {});
   });
@@ -119,7 +134,10 @@ describe('MIDI-Out', function() {
     var midiout = new WMT.MidiDst(name);
     midiout.connect();
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
-      midi.onstatechange = () => { midi.onstatechange = () => {}; done(); };
+      midi.onstatechange = () => {
+        midi.onstatechange = () => {};
+        done();
+      };
       setTimeout(() => { midiout.disconnect(); }, 20);
     }, () => {});
   });

@@ -26,6 +26,7 @@ function MidiSrc(name, man, ver) {
     }
   }
   Object.defineProperty(this, 'connected', { get: function() { return _Src[id].connected; }, enumerable: true });
+  Object.defineProperty(this, 'busy', { get: function() { return !!_Src[id].busy; }, set: function(b) { _Src[id].busy = !!b; }, enumerable: true });
   Object.freeze(this);
 }
 
@@ -77,6 +78,7 @@ function MidiDst(name, man, ver) {
   }
   this.receive = _doNothing;
   Object.defineProperty(this, 'connected', { get: function() { return _Dst[id].connected; }, enumerable: true });
+  Object.defineProperty(this, 'busy', { get: function() { return !!_Dst[id].busy; }, set: function(b) { _Dst[id].busy = !!b; }, enumerable: true });
   Object.seal(this);
 }
 
