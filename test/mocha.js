@@ -4,7 +4,10 @@ var WMT = require('..');
 describe('midi: false', function() {
   it('requestMIDIAccess() returns error', function(done) {
     WMT.midi = false;
-    WMT.requestMIDIAccess().then(() => {}, () => { done(); });
+    WMT.requestMIDIAccess().then(() => {}, (error) => {
+      assert.equal(error.name, 'SecurityError');
+      done();
+    });
   });
 });
 
@@ -20,7 +23,10 @@ describe('midi: true; sysex: false', function() {
   it('requestMIDIAccess({ sysex: true }) returns error', function(done) {
     WMT.midi = true;
     WMT.sysex = false;
-    WMT.requestMIDIAccess({ sysex: true }).then(() => {}, () => { done(); });
+    WMT.requestMIDIAccess({ sysex: true }).then(() => {}, (error) => {
+      assert.equal(error.name, 'SecurityError');
+      done();
+    });
   });
 });
 
@@ -46,15 +52,29 @@ describe('midi: true; sysex: true', function() {
 describe('MIDI-In', function() {
   WMT.midi = true;
   WMT.sysex = true;
-  var name = 'Virtual MIDI-In';
-  var midiin = WMT.MidiSrc(name); // should work with or without 'new'
-  midiin.connect();
+  var name1 = 'Virtual MIDI-In';
+  var name2 = 'Virtual MIDI-In - busy';
+  var midiin1 = WMT.MidiSrc(name1); // should work with or without 'new'
+  var midiin2 = new WMT.MidiSrc(name2);
+  midiin1.connect();
+  midiin2.busy = true;
+  midiin2.connect();
   it('port is listed in MIDIInputMap', function(done) {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      var count = 0;
       midi.inputs.forEach((port) => {
         assert.equal(port.type, 'input');
-        if (port.name == name) {
-          done();
+        if (port.name == name1) {
+          assert.equal(port.state, 'connected');
+          assert.equal(port.connection, 'open');
+          count++;
+          if (count == 2) done();
+        }
+        if (port.name == name2) {
+          assert.equal(port.state, 'connected');
+          assert.equal(port.connection, 'closed');
+          count++;
+          if (count == 2) done();
         }
       });
     }, () => {});
@@ -62,9 +82,9 @@ describe('MIDI-In', function() {
   it('receive MIDI message from MIDIInput', function(done) {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.inputs.forEach((port) => {
-        if (port.name == name) port.onmidimessage = () => { port.onmidimessage = () => {}; done(); };
+        if (port.name == name1) port.onmidimessage = () => { port.onmidimessage = () => {}; done(); };
       });
-      setTimeout(() => { midiin.emit([0x90, 0x40, 0x7f]); }, 20);
+      setTimeout(() => { midiin1.emit([0x90, 0x40, 0x7f]); }, 20);
     }, () => {});
   });
   it('connect new MIDIInput', function(done) {
@@ -96,24 +116,38 @@ describe('MIDI-In', function() {
 describe('MIDI-Out', function() {
   WMT.midi = true;
   WMT.sysex = true;
-  var name = 'Virtual MIDI-Out';
-  var midiout = WMT.MidiDst(name); // should work with or without 'new'
-  midiout.connect();
+  var name1 = 'Virtual MIDI-Out';
+  var name2 = 'Virtual MIDI-Out - busy';
+  var midiout1 = WMT.MidiDst(name1); // should work with or without 'new'
+  var midiout2 = new WMT.MidiDst(name2);
+  midiout1.connect();
+  midiout2.busy = true;
+  midiout2.connect();
   it('port is listed in MIDIOutputMap', function(done) {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      var count = 0;
       midi.outputs.forEach((port) => {
         assert.equal(port.type, 'output');
-        if (port.name == name) {
-          done();
+        if (port.name == name1) {
+          assert.equal(port.state, 'connected');
+          assert.equal(port.connection, 'open');
+          count++;
+          if (count == 2) done();
+        }
+        if (port.name == name2) {
+          assert.equal(port.state, 'connected');
+          assert.equal(port.connection, 'closed');
+          count++;
+          if (count == 2) done();
         }
       });
     }, () => {});
   });
   it('send MIDI message to MIDIOutput', function(done) {
-    midiout.receive = () => { midiout.receive = () => {}; done(); };
+    midiout1.receive = () => { midiout1.receive = () => {}; done(); };
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.outputs.forEach((port) => {
-        if (port.name == name) { port.send([0x90, 0x40, 0x7f]); port.clear(); }
+        if (port.name == name1) { port.send([0x90, 0x40, 0x7f]); port.clear(); }
       });
     }, () => {});
   });

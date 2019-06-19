@@ -112,6 +112,7 @@ function MIDIConnectionEvent(access, connection) {
 }
 
 function MIDIInput(port) {
+  var _open = true;
   var _onmidimessage;
   var _onstatechange;
   _readonly(this, 'type', 'input');
@@ -119,9 +120,17 @@ function MIDIInput(port) {
   _readonly(this, 'name', port.name);
   _readonly(this, 'manufacturer', port.manufacturer);
   _readonly(this, 'version', port.version);
+  Object.defineProperty(this, 'state', {
+    get: function() { return port.connected ? 'connected' : 'disconnected'; },
+    enumerable: true
+  });
+  Object.defineProperty(this, 'connection', {
+    get: function() { return port.connected && !port.busy && _open ? 'open' : 'closed'; },
+    enumerable: true
+  });
   Object.defineProperty(this, 'onmidimessage', {
     get: function() { return _onmidimessage; },
-    set: function(f) { _onmidimessage = f instanceof Function ? f : undefined; },
+    set: function(f) { _open = true; _onmidimessage = f instanceof Function ? f : undefined; },
     enumerable: true
   });
   Object.defineProperty(this, 'onstatechange', {
@@ -133,15 +142,24 @@ function MIDIInput(port) {
 }
 
 function MIDIOutput(port) {
+  var _open = true;
   var _onstatechange;
   _readonly(this, 'type', 'output');
   _readonly(this, 'id', port.id);
   _readonly(this, 'name', port.name);
   _readonly(this, 'manufacturer', port.manufacturer);
   _readonly(this, 'version', port.version);
-  this.send = function(arr) { port.receive(arr); };
+  this.send = function(arr) { _open = true; port.receive(arr); };
   this.close = _doNothing;
   this.clear = _doNothing;
+  Object.defineProperty(this, 'state', {
+    get: function() { return port.connected ? 'connected' : 'disconnected'; },
+    enumerable: true
+  });
+  Object.defineProperty(this, 'connection', {
+    get: function() { return port.connected && !port.busy && _open ? 'open' : 'closed'; },
+    enumerable: true
+  });
   Object.defineProperty(this, 'onstatechange', {
     get: function() { return _onstatechange; },
     set: function(f) { _onstatechange = f instanceof Function ? f : undefined; },
