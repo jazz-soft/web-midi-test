@@ -120,6 +120,20 @@ function MIDIInput(port) {
   _readonly(this, 'name', port.name);
   _readonly(this, 'manufacturer', port.manufacturer);
   _readonly(this, 'version', port.version);
+  this.open = function() {
+    var self = this;
+    _open = true;
+    return new Promise((resolve, reject) => {
+      if (!port.connected) reject(new DOMException('InvalidAccessError', 'Port is not connected', 15));
+      else if (port.busy) reject(new DOMException('InvalidAccessError', 'Port is busy', 15));
+      else resolve(self);
+    });
+  };
+  this.close = function() {
+    var self = this;
+    _open = false;
+    return new Promise((resolve, reject) => { resolve(self);});
+  };
   Object.defineProperty(this, 'state', {
     get: function() { return port.connected ? 'connected' : 'disconnected'; },
     enumerable: true
@@ -150,7 +164,20 @@ function MIDIOutput(port) {
   _readonly(this, 'manufacturer', port.manufacturer);
   _readonly(this, 'version', port.version);
   this.send = function(arr) { _open = true; port.receive(arr); };
-  this.close = _doNothing;
+  this.open = function() {
+    var self = this;
+    _open = true;
+    return new Promise((resolve, reject) => {
+      if (!port.connected) reject(new DOMException('InvalidAccessError', 'Port is not connected', 15));
+      else if (port.busy) reject(new DOMException('InvalidAccessError', 'Port is busy', 15));
+      else resolve(self);
+    });
+  };
+  this.close = function() {
+    var self = this;
+    _open = false;
+    return new Promise((resolve, reject) => { resolve(self);});
+  };
   this.clear = _doNothing;
   Object.defineProperty(this, 'state', {
     get: function() { return port.connected ? 'connected' : 'disconnected'; },
