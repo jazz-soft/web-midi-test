@@ -56,7 +56,7 @@ MidiSrc.prototype.disconnect = function() {
 
 MidiSrc.prototype.emit = function(arr) {
   for (var i = 0; i < _Src[this.id].ports.length; i++) {
-    if (_Src[this.id].ports[i].onmidimessage) {
+    if (_Src[this.id].ports[i].onmidimessage && _Src[this.id].ports[i].connection == 'open') {
       _Src[this.id].ports[i].onmidimessage(new MIDIMessageEvent(arr));
     }
   }

@@ -1,10 +1,11 @@
 var assert = require('assert');
 var WMT = require('..');
+function noop() {};
 
 describe('midi: false', function() {
   it('requestMIDIAccess() returns error', function(done) {
     WMT.midi = false;
-    WMT.requestMIDIAccess().then(() => {}, (error) => {
+    WMT.requestMIDIAccess().then(noop, (error) => {
       assert.equal(error.name, 'SecurityError');
       done();
     });
@@ -18,12 +19,12 @@ describe('midi: true; sysex: false', function() {
     WMT.requestMIDIAccess().then((midi) => {
       assert.equal(midi.sysexEnabled, false);
       done();
-    }, () => {});
+    }, noop);
   });
   it('requestMIDIAccess({ sysex: true }) returns error', function(done) {
     WMT.midi = true;
     WMT.sysex = false;
-    WMT.requestMIDIAccess({ sysex: true }).then(() => {}, (error) => {
+    WMT.requestMIDIAccess({ sysex: true }).then(noop, (error) => {
       assert.equal(error.name, 'SecurityError');
       done();
     });
@@ -37,7 +38,7 @@ describe('midi: true; sysex: true', function() {
     WMT.requestMIDIAccess().then((midi) => {
       assert.equal(midi.sysexEnabled, false);
       done();
-    }, () => {});
+    }, noop);
   });
   it('requestMIDIAccess({ sysex: true }) returns success', function(done) {
     WMT.midi = true;
@@ -45,7 +46,7 @@ describe('midi: true; sysex: true', function() {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       assert.equal(midi.sysexEnabled, true);
       done();
-    }, () => {});
+    }, noop);
   });
 });
 
@@ -67,37 +68,65 @@ describe('MIDI-In', function() {
         if (port.name == name1) {
           assert.equal(port.state, 'connected');
           assert.equal(port.connection, 'open');
+          port.close().then(noop, noop);
+          assert.equal(port.connection, 'closed');
+          port.open().then(noop, noop);
+          assert.equal(port.connection, 'open');
           count++;
           if (count == 2) done();
         }
         if (port.name == name2) {
           assert.equal(port.state, 'connected');
           assert.equal(port.connection, 'closed');
+          port.close().then(noop, noop);
+          assert.equal(port.connection, 'closed');
+          port.open().then(noop, noop);
+          assert.equal(port.connection, 'closed');
           count++;
           if (count == 2) done();
         }
       });
-    }, () => {});
+    }, noop);
   });
   it('receive MIDI message from MIDIInput', function(done) {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.inputs.forEach((port) => {
-        if (port.name == name1) port.onmidimessage = () => { port.onmidimessage = () => {}; done(); };
+        if (port.name == name1) {
+          port.close().then(noop, noop);
+          assert.equal(port.connection, 'closed');
+          port.onmidimessage = () => { port.onmidimessage = noop; done(); };
+          assert.equal(port.connection, 'open');
+        }
       });
-      setTimeout(() => { midiin1.emit([0x90, 0x40, 0x7f]); }, 20);
-    }, () => {});
+      setTimeout(() => { midiin1.emit([0x90, 0x40, 0x7f]); }, 10);
+    }, noop);
+  });
+  it('closed MIDIInput should not receive messages', function(done) {
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.inputs.forEach((port) => {
+        if (port.name == name1) {
+          port.onmidimessage = () => { assert.equal(undefined, 'The port should be closed!'); };
+          port.close().then(noop, noop);
+          assert.equal(port.connection, 'closed');
+        }
+        if (port.name == name2) {
+          port.onmidimessage = () => { assert.equal(undefined, 'The port should be closed!'); };
+        }
+      });
+      setTimeout(() => { midiin1.emit([0x90, 0x40, 0x7f]); midiin2.emit([0x90, 0x40, 0x7f]); setTimeout(() => { done(); }, 10); }, 10);
+    }, noop);
   });
   it('connect new MIDIInput', function(done) {
     var name = 'Virtual MIDI-In to connect';
     var midiin = new WMT.MidiSrc(name);
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.onstatechange = () => {
-        midi.onstatechange = () => {};
+        midi.onstatechange = noop;
         midiin.disconnect();
         done();
       };
-      setTimeout(() => { midiin.connect(); }, 20);
-    }, () => {});
+      setTimeout(() => { midiin.connect(); }, 10);
+    }, noop);
   });
   it('disconnect existing MIDIInput', function(done) {
     var name = 'Virtual MIDI-In to disconnect';
@@ -105,11 +134,11 @@ describe('MIDI-In', function() {
     midiin.connect();
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.onstatechange = () => {
-        midi.onstatechange = () => {};
+        midi.onstatechange = noop;
         done();
       };
-      setTimeout(() => { midiin.disconnect(); }, 20);
-    }, () => {});
+      setTimeout(() => { midiin.disconnect(); }, 10);
+    }, noop);
   });
 });
 
@@ -131,37 +160,45 @@ describe('MIDI-Out', function() {
         if (port.name == name1) {
           assert.equal(port.state, 'connected');
           assert.equal(port.connection, 'open');
+          port.close().then(noop, noop);
+          assert.equal(port.connection, 'closed');
+          port.open().then(noop, noop);
+          assert.equal(port.connection, 'open');
           count++;
           if (count == 2) done();
         }
         if (port.name == name2) {
           assert.equal(port.state, 'connected');
           assert.equal(port.connection, 'closed');
+          port.close().then(noop, noop);
+          assert.equal(port.connection, 'closed');
+          port.open().then(noop, noop);
+          assert.equal(port.connection, 'closed');
           count++;
           if (count == 2) done();
         }
       });
-    }, () => {});
+    }, noop);
   });
   it('send MIDI message to MIDIOutput', function(done) {
-    midiout1.receive = () => { midiout1.receive = () => {}; done(); };
+    midiout1.receive = () => { midiout1.receive = noop; done(); };
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.outputs.forEach((port) => {
         if (port.name == name1) { port.send([0x90, 0x40, 0x7f]); port.clear(); }
       });
-    }, () => {});
+    }, noop);
   });
   it('connect new MIDIOutput', function(done) {
     var name = 'Virtual MIDI-Out to connect';
     var midiout = new WMT.MidiDst(name);
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.onstatechange = () => {
-        midi.onstatechange = () => {};
+        midi.onstatechange = noop;
         midiout.disconnect();
         done();
       };
-      setTimeout(() => { midiout.connect(); }, 20);
-    }, () => {});
+      setTimeout(() => { midiout.connect(); }, 10);
+    }, noop);
   });
   it('disconnect existing MIDIOutput', function(done) {
     var name = 'Virtual MIDI-Out to disconnect';
@@ -169,10 +206,10 @@ describe('MIDI-Out', function() {
     midiout.connect();
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
       midi.onstatechange = () => {
-        midi.onstatechange = () => {};
+        midi.onstatechange = noop;
         done();
       };
-      setTimeout(() => { midiout.disconnect(); }, 20);
-    }, () => {});
+      setTimeout(() => { midiout.disconnect(); }, 10);
+    }, noop);
   });
 });
