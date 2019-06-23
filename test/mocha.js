@@ -62,6 +62,9 @@ describe('MIDI-In', function() {
   midiin2.connect();
   it('port is listed in MIDIInputMap', function(done) {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      assert.equal(midi.inputs.size, 2);
+      assert.equal(midi.inputs.values().length, 2);
+      assert.equal(midi.inputs.entries().length, 2);
       var count = 0;
       midi.inputs.forEach((port) => {
         assert.equal(port.type, 'input');
@@ -154,6 +157,9 @@ describe('MIDI-Out', function() {
   midiout2.connect();
   it('port is listed in MIDIOutputMap', function(done) {
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      assert.equal(midi.outputs.size, 2);
+      assert.equal(midi.outputs.values().length, 2);
+      assert.equal(midi.outputs.entries().length, 2);
       var count = 0;
       midi.outputs.forEach((port) => {
         assert.equal(port.type, 'output');

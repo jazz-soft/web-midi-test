@@ -195,35 +195,66 @@ function MIDIOutput(port) {
   Object.freeze(this);
 }
 
+function _Maplike(data) {
+  this.has = function(id) {
+    return data.hasOwnProperty(id) && data[id].connected;
+  };
+  this.keys = function() {
+    var out = [];
+    for (var id in data) if (this.has(id)) out.push(id);
+    return out;
+  };
+  this.values = function() {
+    var out = [];
+    for (var id in data) if (this.has(id)) out.push(this.get(id));
+    return out;
+  };
+  this.entries = function() {
+    var out = [];
+    for (var id in data) if (this.has(id)) out.push([id, this.get(id)]);
+    return out;
+  };
+  this.forEach = function(fun, self) {
+    if (typeof self == 'undefined') self = this;
+    for (var id in data) if (this.has(id)) fun.call(self, this.get(id), id, this);
+  };
+  Object.defineProperty(this, 'size', {
+    get: function() { return this.keys().length; },
+    enumerable: true
+  });
+}
+
 function MIDIInputMap(_inputs) {
-  this.forEach = function(fun) {
-    for (var id in _Src) {
-      if (_Src.hasOwnProperty(id) && _Src[id].connected) {
-        if (!_inputs[id]) {
-          _inputs[id] = new MIDIInput(_Src[id].port);
-          _Src[id].ports.push(_inputs[id]);
-        }
-        fun(_inputs[id], id);
+  this.get = function(id) {
+    if (_Src.hasOwnProperty(id) && _Src[id].connected) {
+      if (!_inputs[id]) {
+        _inputs[id] = new MIDIInput(_Src[id].port);
+        _Src[id].ports.push(_inputs[id]);
       }
+      return _inputs[id];
     }
-  }
+  };
   Object.freeze(this);
 }
 
+MIDIInputMap.prototype = new _Maplike(_Src);
+MIDIInputMap.prototype.constructor = MIDIInputMap;
+
 function MIDIOutputMap(_outputs) {
-  this.forEach = function(fun) {
-    for (var id in _Dst) {
-      if (_Dst.hasOwnProperty(id) && _Dst[id].connected) {
-        if (!_outputs[id]) {
-          _outputs[id] = new MIDIOutput(_Dst[id].port);
-          _Dst[id].ports.push(_outputs[id]);
-        }
-        fun(_outputs[id], id);
+  this.get = function(id) {
+    if (_Dst.hasOwnProperty(id) && _Dst[id].connected) {
+      if (!_outputs[id]) {
+        _outputs[id] = new MIDIOutput(_Dst[id].port);
+        _Dst[id].ports.push(_outputs[id]);
       }
+      return _outputs[id];
     }
-  }
+  };
   Object.freeze(this);
 }
+
+MIDIOutputMap.prototype = new _Maplike(_Dst);
+MIDIOutputMap.prototype.constructor = MIDIOutputMap;
 
 function MIDIAccess(sysex) {
   var _inputs = {};
