@@ -7,7 +7,7 @@
 
 coming soon...
 
-## Virtual Web MIDI API for testing Web MIDI applications
+## Fake Web MIDI API for testing Web MIDI applications
 
 See also: [**Web MIDI API**](https://webaudio.github.io/web-midi-api/)
 

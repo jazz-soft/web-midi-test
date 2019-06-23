@@ -1,7 +1,7 @@
 {
   "name": "web-midi-test",
-  "version": "0.0.6",
-  "description": "Virtual Web MIDI API for testing Web MIDI applications",
+  "version": "0.0.7",
+  "description": "Fake Web MIDI API for testing Web MIDI applications",
   "main": "wmt.js",
   "scripts": {
     "test": "nyc mocha",
