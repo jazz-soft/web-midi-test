@@ -123,7 +123,8 @@ describe('MIDI-In', function() {
     var name = 'Virtual MIDI-In to connect';
     var midiin = new WMT.MidiSrc(name);
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
-      midi.onstatechange = () => {
+      midi.onstatechange = (evt) => {
+        assert.equal(evt.port.name, name);
         midi.onstatechange = noop;
         midiin.disconnect();
         done();
@@ -136,7 +137,8 @@ describe('MIDI-In', function() {
     var midiin = new WMT.MidiSrc(name);
     midiin.connect();
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
-      midi.onstatechange = () => {
+      midi.onstatechange = (evt) => {
+        assert.equal(evt.port.name, name);
         midi.onstatechange = noop;
         done();
       };
@@ -198,7 +200,8 @@ describe('MIDI-Out', function() {
     var name = 'Virtual MIDI-Out to connect';
     var midiout = new WMT.MidiDst(name);
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
-      midi.onstatechange = () => {
+      midi.onstatechange = (evt) => {
+        assert.equal(evt.port.name, name);
         midi.onstatechange = noop;
         midiout.disconnect();
         done();
@@ -211,7 +214,8 @@ describe('MIDI-Out', function() {
     var midiout = new WMT.MidiDst(name);
     midiout.connect();
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
-      midi.onstatechange = () => {
+      midi.onstatechange = (evt) => {
+        assert.equal(evt.port.name, name);
         midi.onstatechange = noop;
         done();
       };

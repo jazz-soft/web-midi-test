@@ -32,11 +32,16 @@ function MidiSrc(name, man, ver) {
 
 MidiSrc.prototype.connect = function() {
   if (!_Src[this.id].connected) {
+    var i;
     _Src[this.id].connected = true;
-    for (var i = 0; i < _Acc.length; i++) {
+    for (i = 0; i < _Src[this.id].ports.length; i++) {
+      if (_Src[this.id].ports[i].onstatechange) {
+        _Src[this.id].ports[i].onstatechange(new MIDIConnectionEvent(_Src[this.id].ports[i]));
+      }
+    }
+    for (i = 0; i < _Acc.length; i++) {
       if (_Acc[i].onstatechange) {
-        var evt = new MIDIConnectionEvent(_Acc[i], this);
-        _Acc[i].onstatechange(evt);
+        _Acc[i].onstatechange(new MIDIConnectionEvent(_Acc[i].inputs.get(this.id)));
       }
     }
   }
@@ -44,13 +49,20 @@ MidiSrc.prototype.connect = function() {
 
 MidiSrc.prototype.disconnect = function() {
   if (_Src[this.id].connected) {
-    _Src[this.id].connected = false;
-    for (var i = 0; i < _Acc.length; i++) {
+    var i;
+    var x = [];
+    for (i = 0; i < _Acc.length; i++) {
       if (_Acc[i].onstatechange) {
-        var evt = new MIDIConnectionEvent(_Acc[i], this);
-        _Acc[i].onstatechange(evt);
+        x.push([_Acc[i], _Acc[i].inputs.get(this.id)]);
       }
     }
+    _Src[this.id].connected = false;
+    for (i = 0; i < _Src[this.id].ports.length; i++) {
+      if (_Src[this.id].ports[i].onstatechange) {
+        _Src[this.id].ports[i].onstatechange(new MIDIConnectionEvent(_Src[this.id].ports[i]));
+      }
+    }
+    for (i = 0; i < x.length; i++) x[i][0].onstatechange(new MIDIConnectionEvent(x[i][1]));
   }
 }
 
@@ -84,11 +96,16 @@ function MidiDst(name, man, ver) {
 
 MidiDst.prototype.connect = function() {
   if (!_Dst[this.id].connected) {
+    var i;
     _Dst[this.id].connected = true;
-    for (var i = 0; i < _Acc.length; i++) {
+    for (i = 0; i < _Dst[this.id].ports.length; i++) {
+      if (_Dst[this.id].ports[i].onstatechange) {
+        _Dst[this.id].ports[i].onstatechange(new MIDIConnectionEvent(_Dst[this.id].ports[i]));
+      }
+    }
+    for (i = 0; i < _Acc.length; i++) {
       if (_Acc[i].onstatechange) {
-        var evt = new MIDIConnectionEvent(_Acc[i], this);
-        _Acc[i].onstatechange(evt);
+        _Acc[i].onstatechange(new MIDIConnectionEvent(_Acc[i].outputs.get(this.id)));
       }
     }
   }
@@ -96,19 +113,28 @@ MidiDst.prototype.connect = function() {
 
 MidiDst.prototype.disconnect = function() {
   if (_Dst[this.id].connected) {
-    _Dst[this.id].connected = false;
-    for (var i = 0; i < _Acc.length; i++) {
+    var i;
+    var x = [];
+    for (i = 0; i < _Acc.length; i++) {
       if (_Acc[i].onstatechange) {
-        var evt = new MIDIConnectionEvent(_Acc[i], this);
-        _Acc[i].onstatechange(evt);
+        x.push([_Acc[i], _Acc[i].outputs.get(this.id)]);
       }
     }
+    _Dst[this.id].connected = false;
+    for (i = 0; i < _Dst[this.id].ports.length; i++) {
+      if (_Dst[this.id].ports[i].onstatechange) {
+        _Dst[this.id].ports[i].onstatechange(new MIDIConnectionEvent(_Dst[this.id].ports[i]));
+      }
+    }
+    for (i = 0; i < x.length; i++) x[i][0].onstatechange(new MIDIConnectionEvent(x[i][1]));
   }
 }
 
 function _doNothing() {}
 
-function MIDIConnectionEvent(access, connection) {
+function MIDIConnectionEvent(port) {
+  this.port = port;
+  Object.freeze(this);
 }
 
 function MIDIInput(port) {
