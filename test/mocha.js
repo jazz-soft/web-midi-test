@@ -1,5 +1,7 @@
-var assert = require('assert');
-var WMT = require('..');
+if (typeof require != 'undefined') {
+  var assert = require('assert');
+  var WMT = require('..');
+}
 function noop() {};
 
 describe('midi: false', function() {

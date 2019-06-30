@@ -1,3 +1,16 @@
+(function(global, factory) {
+  if (typeof exports === 'object' && typeof module !== 'undefined') {
+    module.exports = factory();
+  }
+  else if (typeof define === 'function' && define.amd) {
+    define('WMT', [], factory);
+  }
+  else {
+    if (!global) global = window;
+    global.WMT = factory();
+  }
+})(this, function() {
+
 function _readonly(obj, name, val) {
   Object.defineProperty(obj, name, { get: function() { return val; }, enumerable: true });
 }
@@ -335,4 +348,5 @@ Object.defineProperty(WMT, 'midi', { get: function() { return _midi; }, set: fun
 Object.defineProperty(WMT, 'sysex', { get: function() { return _sysex; }, set: function(b) { _sysex = !!b; }, enumerable: true });
 Object.freeze(WMT);
 
-module.exports = WMT;
+  return WMT;
+});
