@@ -21,7 +21,7 @@ Install: `npm install web-midi-test --save-dev`
 
 ### In HTML
 
-    <script src="node_modules/wweb-midi-test/wmt.js"></script>
+    <script src="node_modules/web-midi-test/wmt.js"></script>
     // this will add an object named WMT into the global scope
     // ...
 
