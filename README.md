@@ -14,12 +14,12 @@ See also: [**midi-test**](https://github.com/jazz-soft/midi-test)
 Install: `npm install web-midi-test --save-dev`
 
 ## Usage
-### In Node.js
+#### In Node.js
 
     var WMT = require('web-midi-test');
     // ...
 
-### In HTML
+#### In HTML
 
     <script src="node_modules/web-midi-test/wmt.js"></script>
     // this will add an object named WMT into the global scope

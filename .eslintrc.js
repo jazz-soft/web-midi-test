@@ -21,8 +21,13 @@ module.exports = {
     },
     {
       "files": ["wmt.js"],
+      "globals": {
+        "define": "readonly"
+      },
       "rules": {
-        "no-constant-condition" : ["error", { "checkLoops": false }]
+        "no-constant-condition" : ["error", { "checkLoops": false }],
+        "no-prototype-builtins" : "off",
+        "no-unused-vars": ["error", { "args": "none" }]
       }
     }
   ]

@@ -2,7 +2,8 @@ if (typeof require != 'undefined') {
   var assert = require('assert');
   var WMT = require('..');
 }
-function noop() {};
+
+function noop() {}
 
 describe('midi: false', function() {
   it('requestMIDIAccess() returns error', function(done) {
