@@ -5,8 +5,6 @@
 [![Build Status](https://travis-ci.org/jazz-soft/web-midi-test.svg?branch=master)](https://travis-ci.org/jazz-soft/web-midi-test)
 [![Coverage Status](https://coveralls.io/repos/github/jazz-soft/web-midi-test/badge.svg?branch=master)](https://coveralls.io/github/jazz-soft/web-midi-test?branch=master)
 
-coming soon...
-
 ## Fake Web MIDI API for testing Web MIDI applications
 
 See also: [**Web MIDI API**](https://webaudio.github.io/web-midi-api/)
@@ -15,10 +13,21 @@ See also: [**midi-test**](https://github.com/jazz-soft/midi-test)
 
 Install: `npm install web-midi-test --save-dev`
 
+## Usage
+### In Node.js
+
+    var WMT = require('web-midi-test');
+    // ...
+
+### In HTML
+
+    <script src="node_modules/wweb-midi-test/wmt.js"></script>
+    // this will add an object named WMT into the global scope
+    // ...
+
 ## API
 ### MIDI access
 
-    var WMT = require('web-midi-test');
     function onSuccess() { console.log('Success!'); }
     function onFail() { console.log('Fail!'); }
     
@@ -37,7 +46,6 @@ Install: `npm install web-midi-test --save-dev`
 
 ### MIDI Source (Virtual MIDI-In)
 
-    var WMT = require('web-midi-test');
     var port = new WMT.MidiSrc('VIRTUAL MIDI-In');
     port.connect();
     port.emit([0x90, 0x40, 0x7f]);
@@ -46,7 +54,6 @@ Install: `npm install web-midi-test --save-dev`
 
 ### MIDI Destination (Virtual MIDI-Out)
 
-    var WMT = require('web-midi-test');
     var port = new WMT.MidiDst('VIRTUAL MIDI-Out');
     port.receive = function(msg) { console.log('received:', msg); };
     port.connect();
