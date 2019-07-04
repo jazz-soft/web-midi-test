@@ -17,12 +17,17 @@ Install: `npm install web-midi-test --save-dev`
 #### In Node.js
 
     var WMT = require('web-midi-test');
+    var navigator = { requestMIDIAccess: WMT.requestMIDIAccess };
     // ...
 
 #### In HTML
 
     <script src="node_modules/web-midi-test/wmt.js"></script>
     // this will add an object named WMT into the global scope
+    // ...
+    if (typeof navigator.requestMIDIAccess == 'undefined') {
+      navigator.requestMIDIAccess = WMT.requestMIDIAccess;
+    }
     // ...
 
 ## API
