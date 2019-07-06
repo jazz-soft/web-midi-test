@@ -31,7 +31,7 @@ Install: `npm install web-midi-test --save-dev`
     // ...
 
 ## API
-### MIDI access
+#### MIDI access
 
     function onSuccess() { console.log('Success!'); }
     function onFail() { console.log('Fail!'); }
@@ -49,7 +49,7 @@ Install: `npm install web-midi-test --save-dev`
     WMT.midi = false;
     WMT.requestMIDIAccess().then(onSuccess, onFail); // Fail!
 
-### MIDI Source (Virtual MIDI-In)
+#### MIDI Source (Virtual MIDI-In)
 
     var port = new WMT.MidiSrc('VIRTUAL MIDI-In');
     port.connect();
@@ -57,7 +57,7 @@ Install: `npm install web-midi-test --save-dev`
     //...
     port.disconnect();
 
-### MIDI Destination (Virtual MIDI-Out)
+#### MIDI Destination (Virtual MIDI-Out)
 
     var port = new WMT.MidiDst('VIRTUAL MIDI-Out');
     port.receive = function(msg) { console.log('received:', msg); };
