@@ -19,7 +19,7 @@
     if (target.onstatechange) setTimeout(function() { target.onstatechange(new MIDIConnectionEvent(data)); }, 0);
   }
 
-  function _doNothing() {}
+  function _noop() {}
 
   var _Acc = [];
   var _Src = {};
@@ -97,7 +97,7 @@
         break;
       }
     }
-    this.receive = _doNothing;
+    this.receive = _noop;
     Object.defineProperty(this, 'connected', { get: function() { return _Dst[id].connected; }, enumerable: true });
     Object.defineProperty(this, 'busy', {
       get: function() { return !!_Dst[id].busy; },
@@ -135,7 +135,8 @@
   }
 
   function MIDIInput(access, port) {
-    var _open = true;
+    var self = this;
+    var _open = false;
     var _onmidimessage;
     var _onstatechange;
     _readonly(this, 'type', 'input');
@@ -144,7 +145,6 @@
     _readonly(this, 'manufacturer', port.manufacturer);
     _readonly(this, 'version', port.version);
     this.open = function() {
-      var self = this;
       return new Promise((resolve, reject) => {
         if (port.connected) {
           if (!port.busy) {
@@ -170,7 +170,6 @@
       });
     };
     this.close = function() {
-      var self = this;
       _open = false;
       return new Promise((resolve, reject) => {
         var arr = [];
@@ -197,7 +196,7 @@
     });
     Object.defineProperty(this, 'onmidimessage', {
       get: function() { return _onmidimessage; },
-      set: function(f) { _open = true; _onmidimessage = f instanceof Function ? f : undefined; },
+      set: function(f) { if (!_open) self.open().then(_noop, _noop); _onmidimessage = f instanceof Function ? f : undefined; },
       enumerable: true
     });
     Object.defineProperty(this, 'onstatechange', {
@@ -209,16 +208,16 @@
   }
 
   function MIDIOutput(access, port) {
-    var _open = true;
+    var self = this;
+    var _open = false;
     var _onstatechange;
     _readonly(this, 'type', 'output');
     _readonly(this, 'id', port.id);
     _readonly(this, 'name', port.name);
     _readonly(this, 'manufacturer', port.manufacturer);
     _readonly(this, 'version', port.version);
-    this.send = function(arr) { _open = true; port.receive(arr); };
+    this.send = function(arr) { if (!_open) self.open().then(_noop, _noop); port.receive(arr); };
     this.open = function() {
-      var self = this;
       return new Promise((resolve, reject) => {
         if (port.connected) {
           if (!port.busy) {
@@ -244,7 +243,6 @@
       });
     };
     this.close = function() {
-      var self = this;
       this.clear();
       return new Promise((resolve, reject) => {
         var arr = [];
@@ -261,7 +259,7 @@
         resolve(self);
       });
     };
-    this.clear = _doNothing;
+    this.clear = _noop;
     Object.defineProperty(this, 'state', {
       get: function() { return port.connected ? 'connected' : 'disconnected'; },
       enumerable: true
@@ -374,8 +372,7 @@
           reject(new DOMException('SecurityError', 'Sysex is not allowed', 18));
         }
         else {
-          var access = new MIDIAccess(sysex);
-          resolve(access);
+          resolve(new MIDIAccess(sysex));
         }
       }
       else {

@@ -73,11 +73,14 @@ describe('MIDI-In', function() {
         assert.equal(port.type, 'input');
         if (port.name == name1) {
           assert.equal(port.state, 'connected');
-          assert.equal(port.connection, 'open');
+          assert.equal(port.connection, 'closed');
           port.close().then(noop, noop);
           assert.equal(port.connection, 'closed');
           port.open().then(noop, noop);
+          port.open().then(noop, noop);
           assert.equal(port.connection, 'open');
+          port.close().then(noop, noop);
+          assert.equal(port.connection, 'closed');
           count++;
           if (count == 2) done();
         }
@@ -86,6 +89,7 @@ describe('MIDI-In', function() {
           assert.equal(port.connection, 'closed');
           port.close().then(noop, noop);
           assert.equal(port.connection, 'closed');
+          port.open().then(noop, noop);
           port.open().then(noop, noop);
           assert.equal(port.connection, 'closed');
           count++;
@@ -193,11 +197,14 @@ describe('MIDI-Out', function() {
         assert.equal(port.type, 'output');
         if (port.name == name1) {
           assert.equal(port.state, 'connected');
-          assert.equal(port.connection, 'open');
+          assert.equal(port.connection, 'closed');
           port.close().then(noop, noop);
           assert.equal(port.connection, 'closed');
           port.open().then(noop, noop);
+          port.open().then(noop, noop);
           assert.equal(port.connection, 'open');
+          port.close().then(noop, noop);
+          assert.equal(port.connection, 'closed');
           count++;
           if (count == 2) done();
         }
