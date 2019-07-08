@@ -187,6 +187,32 @@ describe('MIDI-In', function() {
       }, 10);
     }, noop);
   });
+  it('close pending connection', function(done) {
+    WMT.requestMIDIAccess().then((midi) => {
+      var port1, port2;
+      midiin1.connect();
+      midiin2.connect();
+      midi.inputs.forEach((port) => {
+        if (port.name == name1) {
+          port1 = port;
+        }
+        if (port.name == name2) {
+          port2 = port;
+        }
+      });
+      setTimeout(() => {
+        var count = 0;
+        midiin1.disconnect();
+        midiin2.disconnect();
+        port1.open().then(noop, () => { assert.equal(port1.connection, 'closed'); count++; if (count == 2) done(); });
+        port2.open().then(noop, () => { assert.equal(port2.connection, 'closed'); count++; if (count == 2) done(); });
+        setTimeout(() => {
+          port1.close().then(noop, noop);
+          port2.close().then(noop, noop);
+        }, 10);
+      }, 10);
+    }, noop);
+  });
   it('MIDIInput: onstatechange()', function(done) {
     var name = 'Another Virtual MIDI-In';
     var midiin = new WMT.MidiSrc(name);
@@ -297,6 +323,8 @@ describe('MIDI-Out', function() {
   it('pending connection', function(done) {
     WMT.requestMIDIAccess().then((midi) => {
       var port1, port2;
+      midiout1.connect();
+      midiout2.connect();
       midi.outputs.forEach((port) => {
         if (port.name == name1) {
           port1 = port;
@@ -318,6 +346,32 @@ describe('MIDI-Out', function() {
         setTimeout(() => {
           midiout1.connect();
           midiout2.connect();
+        }, 10);
+      }, 10);
+    }, noop);
+  });
+  it('close pending connection', function(done) {
+    WMT.requestMIDIAccess().then((midi) => {
+      var port1, port2;
+      midiout1.connect();
+      midiout2.connect();
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          port1 = port;
+        }
+        if (port.name == name2) {
+          port2 = port;
+        }
+      });
+      setTimeout(() => {
+        var count = 0;
+        midiout1.disconnect();
+        midiout2.disconnect();
+        port1.open().then(noop, () => { assert.equal(port1.connection, 'closed'); count++; if (count == 2) done(); });
+        port2.open().then(noop, () => { assert.equal(port2.connection, 'closed'); count++; if (count == 2) done(); });
+        setTimeout(() => {
+          port1.close().then(noop, noop);
+          port2.close().then(noop, noop);
         }, 10);
       }, 10);
     }, noop);
