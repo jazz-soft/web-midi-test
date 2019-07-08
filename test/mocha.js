@@ -65,6 +65,8 @@ describe('MIDI-In', function() {
   midiin2.connect();
   it('port is listed in MIDIInputMap', function(done) {
     WMT.requestMIDIAccess().then((midi) => {
+      midi.onstatechange = 'garbage';
+      assert.equal(midi.onstatechange, null);
       assert.equal(midi.inputs.size, 2);
       assert.equal(midi.inputs.values().length, 2);
       assert.equal(midi.inputs.entries().length, 2);
@@ -72,6 +74,9 @@ describe('MIDI-In', function() {
       midi.inputs.forEach((port) => {
         assert.equal(port.type, 'input');
         if (port.name == name1) {
+          port.onstatechange = 'garbage';
+          assert.equal(port.onstatechange, null);
+          assert.equal(port.onmidimessage, null);
           assert.equal(port.state, 'connected');
           assert.equal(port.connection, 'closed');
           port.close().then(noop, noop);
@@ -104,6 +109,8 @@ describe('MIDI-In', function() {
         if (port.name == name1) {
           port.close().then(noop, noop);
           assert.equal(port.connection, 'closed');
+          port.onmidimessage = 'garbage';
+          assert.equal(port.onmidimessage, null);
           port.onmidimessage = () => { port.onmidimessage = noop; done(); };
           assert.equal(port.connection, 'open');
         }
@@ -152,6 +159,34 @@ describe('MIDI-In', function() {
       setTimeout(() => { midiin.disconnect(); }, 10);
     }, noop);
   });
+  it('pending connection', function(done) {
+    WMT.requestMIDIAccess().then((midi) => {
+      var port1, port2;
+      midi.inputs.forEach((port) => {
+        if (port.name == name1) {
+          port1 = port;
+          assert.equal(port1.connection, 'closed');
+        }
+        if (port.name == name2) {
+          port2 = port;
+          assert.equal(port2.connection, 'closed');
+        }
+      });
+      setTimeout(() => {
+        var count = 0;
+        midiin1.disconnect();
+        midiin2.disconnect();
+        port1.open().then(() => { assert.equal(port1.connection, 'open'); count++; if (count == 2) done(); }, noop);
+        port2.open().then(noop, () => { assert.equal(port2.connection, 'closed'); count++; if (count == 2) done(); });
+        assert.equal(port1.connection, 'pending');
+        assert.equal(port2.connection, 'pending');
+        setTimeout(() => {
+          midiin1.connect();
+          midiin2.connect();
+        }, 10);
+      }, 10);
+    }, noop);
+  });
   it('MIDIInput: onstatechange()', function(done) {
     var name = 'Another Virtual MIDI-In';
     var midiin = new WMT.MidiSrc(name);
@@ -189,6 +224,8 @@ describe('MIDI-Out', function() {
   midiout2.connect();
   it('port is listed in MIDIOutputMap', function(done) {
     WMT.requestMIDIAccess().then((midi) => {
+      midi.onstatechange = 'garbage';
+      assert.equal(midi.onstatechange, null);
       assert.equal(midi.outputs.size, 2);
       assert.equal(midi.outputs.values().length, 2);
       assert.equal(midi.outputs.entries().length, 2);
@@ -196,6 +233,8 @@ describe('MIDI-Out', function() {
       midi.outputs.forEach((port) => {
         assert.equal(port.type, 'output');
         if (port.name == name1) {
+          port.onstatechange = 'garbage';
+          assert.equal(port.onstatechange, null);
           assert.equal(port.state, 'connected');
           assert.equal(port.connection, 'closed');
           port.close().then(noop, noop);
@@ -253,6 +292,34 @@ describe('MIDI-Out', function() {
         done();
       };
       setTimeout(() => { midiout.disconnect(); }, 10);
+    }, noop);
+  });
+  it('pending connection', function(done) {
+    WMT.requestMIDIAccess().then((midi) => {
+      var port1, port2;
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          port1 = port;
+          assert.equal(port1.connection, 'closed');
+        }
+        if (port.name == name2) {
+          port2 = port;
+          assert.equal(port2.connection, 'closed');
+        }
+      });
+      setTimeout(() => {
+        var count = 0;
+        midiout1.disconnect();
+        midiout2.disconnect();
+        port1.open().then(() => { assert.equal(port1.connection, 'open'); count++; if (count == 2) done(); }, noop);
+        port2.open().then(noop, () => { assert.equal(port2.connection, 'closed'); count++; if (count == 2) done(); });
+        assert.equal(port1.connection, 'pending');
+        assert.equal(port2.connection, 'pending');
+        setTimeout(() => {
+          midiout1.connect();
+          midiout2.connect();
+        }, 10);
+      }, 10);
     }, noop);
   });
   it('MIDIOutput: onstatechange()', function(done) {

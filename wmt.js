@@ -59,6 +59,17 @@
       _Src[this.id].connected = true;
       for (i = 0; i < _Src[this.id].ports.length; i++) _changed(_Src[this.id].ports[i], _Src[this.id].ports[i]);
       for (i = 0; i < _Acc.length; i++) _changed(_Acc[i], _Acc[i].inputs.get(this.id));
+      if (_Src[this.id].busy) {
+        for (i = 0; i < _Src[this.id].pending.length; i++) {
+          _Src[this.id].pending[i][2](new DOMException('InvalidAccessError', 'Port is not available', 15));
+        }
+      }
+      else {
+        for (i = 0; i < _Src[this.id].pending.length; i++) {
+          _Src[this.id].pending[i][1](_Src[this.id].pending[i][0]);
+        }
+      }
+      _Src[this.id].pending = [];
     }
   }
 
@@ -113,6 +124,17 @@
       _Dst[this.id].connected = true;
       for (i = 0; i < _Dst[this.id].ports.length; i++) _changed(_Dst[this.id].ports[i], _Dst[this.id].ports[i]);
       for (i = 0; i < _Acc.length; i++) _changed(_Acc[i], _Acc[i].outputs.get(this.id));
+      if (_Dst[this.id].busy) {
+        for (i = 0; i < _Dst[this.id].pending.length; i++) {
+          _Dst[this.id].pending[i][2](new DOMException('InvalidAccessError', 'Port is not available', 15));
+        }
+      }
+      else {
+        for (i = 0; i < _Dst[this.id].pending.length; i++) {
+          _Dst[this.id].pending[i][1](_Dst[this.id].pending[i][0]);
+        }
+      }
+      _Dst[this.id].pending = [];
     }
   }
 
@@ -137,8 +159,8 @@
   function MIDIInput(access, port) {
     var self = this;
     var _open = false;
-    var _onmidimessage;
-    var _onstatechange;
+    var _onmidimessage = null;
+    var _onstatechange = null;
     _readonly(this, 'type', 'input');
     _readonly(this, 'id', port.id);
     _readonly(this, 'name', port.name);
@@ -196,12 +218,12 @@
     });
     Object.defineProperty(this, 'onmidimessage', {
       get: function() { return _onmidimessage; },
-      set: function(f) { if (!_open) self.open().then(_noop, _noop); _onmidimessage = f instanceof Function ? f : undefined; },
+      set: function(f) { if (!_open) self.open().then(_noop, _noop); _onmidimessage = f instanceof Function ? f : null; },
       enumerable: true
     });
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _onstatechange; },
-      set: function(f) { _onstatechange = f instanceof Function ? f : undefined; },
+      set: function(f) { _onstatechange = f instanceof Function ? f : null; },
       enumerable: true
     });
     Object.freeze(this);
@@ -210,7 +232,7 @@
   function MIDIOutput(access, port) {
     var self = this;
     var _open = false;
-    var _onstatechange;
+    var _onstatechange = null;
     _readonly(this, 'type', 'output');
     _readonly(this, 'id', port.id);
     _readonly(this, 'name', port.name);
@@ -270,7 +292,7 @@
     });
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _onstatechange; },
-      set: function(f) { _onstatechange = f instanceof Function ? f : undefined; },
+      set: function(f) { _onstatechange = f instanceof Function ? f : null; },
       enumerable: true
     });
     Object.freeze(this);
@@ -340,14 +362,14 @@
   function MIDIAccess(sysex) {
     var _inputs = {};
     var _outputs = {};
-    var _onstatechange;
+    var _onstatechange = null;
     var self = this;
     this.sysexEnabled = sysex;
     this.inputs = new MIDIInputMap(self, _inputs);
     this.outputs = new MIDIOutputMap(self, _outputs);
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _onstatechange; },
-      set: function(f) { _onstatechange = f instanceof Function ? f : undefined; },
+      set: function(f) { _onstatechange = f instanceof Function ? f : null; },
       enumerable: true
     });
     Object.freeze(this);
