@@ -40,14 +40,19 @@
       id = this.name + '/' + n;
       if (!_Src[id]) {
         _readonly(this, 'id', id);
-        _Src[id] = { port: this, connected: false, ports: [], pending: [] };
+        _Src[id] = { port: this, connected: false, busy: false, ports: [], pending: [] };
         break;
       }
     }
     Object.defineProperty(this, 'connected', { get: function() { return _Src[id].connected; }, enumerable: true });
     Object.defineProperty(this, 'busy', {
-      get: function() { return !!_Src[id].busy; },
-      set: function(b) { _Src[id].busy = !!b; },
+      get: function() { return _Src[id].busy; },
+      set: function(b) {
+        if (_Src[id].busy != !!b) {
+          _Src[id].busy = !!b;
+          if (_Src[id].busy) for (var i = 0; i < _Src[id].ports.length; i++) _Src[id].ports[i].close().then(_noop, _noop);
+        }
+      },
       enumerable: true
     });
     Object.freeze(this);
@@ -104,15 +109,20 @@
       id = this.name + '/' + n;
       if (!_Dst[id]) {
         _readonly(this, 'id', id);
-        _Dst[id] = { port: this, connected: false, ports: [], pending: [] };
+        _Dst[id] = { port: this, connected: false, busy: false, ports: [], pending: [] };
         break;
       }
     }
     this.receive = _noop;
     Object.defineProperty(this, 'connected', { get: function() { return _Dst[id].connected; }, enumerable: true });
     Object.defineProperty(this, 'busy', {
-      get: function() { return !!_Dst[id].busy; },
-      set: function(b) { _Dst[id].busy = !!b; },
+      get: function() { return _Dst[id].busy; },
+      set: function(b) {
+        if (_Dst[id].busy != !!b) {
+          _Dst[id].busy = !!b;
+          if (_Dst[id].busy) for (var i = 0; i < _Dst[id].ports.length; i++) _Dst[id].ports[i].close().then(_noop, _noop);
+        }
+      },
       enumerable: true
     });
     Object.seal(this);

@@ -213,6 +213,25 @@ describe('MIDI-In', function() {
       }, 10);
     }, noop);
   });
+  it('device busy', function(done) {
+    var name = 'Busy Virtual MIDI-In';
+    var midiin = new WMT.MidiSrc(name);
+    var port0;
+    midiin.connect();
+    WMT.requestMIDIAccess().then((midi) => {
+      midi.inputs.forEach((port) => {
+        if (port.name == name) {
+          port0 = port;
+          port.open().then(noop, noop);
+          assert.equal(port.connection, 'open');
+        }
+      });
+      setTimeout(() => {
+        midiin.busy = true; midiin.busy = true; midiin.busy = false;
+        assert.equal(port0.connection, 'closed'); done();
+      }, 10);
+    }, noop);
+  });
   it('MIDIInput: onstatechange()', function(done) {
     var name = 'Another Virtual MIDI-In';
     var midiin = new WMT.MidiSrc(name);
@@ -373,6 +392,25 @@ describe('MIDI-Out', function() {
           port1.close().then(noop, noop);
           port2.close().then(noop, noop);
         }, 10);
+      }, 10);
+    }, noop);
+  });
+  it('device busy', function(done) {
+    var name = 'Busy Virtual MIDI-Out';
+    var midiout = new WMT.MidiDst(name);
+    var port0;
+    midiout.connect();
+    WMT.requestMIDIAccess().then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name) {
+          port0 = port;
+          port.open().then(noop, noop);
+          assert.equal(port.connection, 'open');
+        }
+      });
+      setTimeout(() => {
+        midiout.busy = true; midiout.busy = true; midiout.busy = false;
+        assert.equal(port0.connection, 'closed'); done();
       }, 10);
     }, noop);
   });
