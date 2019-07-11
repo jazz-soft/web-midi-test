@@ -21,6 +21,11 @@
 
   function _noop() {}
 
+  var _time = Date.now || function () { return new Date().getTime(); };
+  var _startTime = _time();
+  var _now = typeof performance != 'undefined' && performance.now ?
+    function() { return performance.now(); } : function() { return _time() - _startTime; };
+
   var _Acc = [];
   var _Src = {};
   var _Dst = {};
@@ -421,6 +426,7 @@
 
   Object.defineProperty(WMT, 'midi', { get: function() { return _midi; }, set: function(b) { _midi = !!b; }, enumerable: true });
   Object.defineProperty(WMT, 'sysex', { get: function() { return _sysex; }, set: function(b) { _sysex = !!b; }, enumerable: true });
+  Object.defineProperty(WMT, 'now', { get: function() { return _now; }, set: function(f) { _now = f; }, enumerable: true });
   Object.freeze(WMT);
 
   return WMT;

@@ -18,6 +18,7 @@ Install: `npm install web-midi-test --save-dev`
 
     var WMT = require('web-midi-test');
     var navigator = { requestMIDIAccess: WMT.requestMIDIAccess };
+    var performance = { now: WMT.now }; // if required...
     // ...
 
 #### In HTML
