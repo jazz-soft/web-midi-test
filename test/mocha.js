@@ -68,8 +68,9 @@ describe('MIDI-In', function() {
       midi.onstatechange = 'garbage';
       assert.equal(midi.onstatechange, null);
       assert.equal(midi.inputs.size, 2);
-      assert.equal(midi.inputs.values().length, 2);
-      assert.equal(midi.inputs.entries().length, 2);
+      assert.equal(midi.inputs.keys().next().value, 'Virtual MIDI-In/0');
+      assert.equal(midi.inputs.values().next().value.id, 'Virtual MIDI-In/0');
+      assert.equal(midi.inputs.entries().next().value[0], 'Virtual MIDI-In/0');
       var count = 0;
       midi.inputs.forEach((port) => {
         assert.equal(port.type, 'input');
@@ -272,8 +273,10 @@ describe('MIDI-Out', function() {
       midi.onstatechange = 'garbage';
       assert.equal(midi.onstatechange, null);
       assert.equal(midi.outputs.size, 2);
-      assert.equal(midi.outputs.values().length, 2);
-      assert.equal(midi.outputs.entries().length, 2);
+      assert.equal(midi.outputs.size, 2);
+      assert.equal(midi.outputs.keys().next().value, 'Virtual MIDI-Out/0');
+      assert.equal(midi.outputs.values().next().value.id, 'Virtual MIDI-Out/0');
+      assert.equal(midi.outputs.entries().next().value[0], 'Virtual MIDI-Out/0');
       var count = 0;
       midi.outputs.forEach((port) => {
         assert.equal(port.type, 'output');

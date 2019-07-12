@@ -318,26 +318,30 @@
       return data.hasOwnProperty(id) && data[id].connected;
     };
     this.keys = function() {
-      var out = [];
-      for (var id in data) if (this.has(id)) out.push(id);
-      return out;
+      var m = new Map();
+      for (var id in data) if (this.has(id)) m.set(id, this.get(id));
+      return m.keys();
     };
     this.values = function() {
-      var out = [];
-      for (var id in data) if (this.has(id)) out.push(this.get(id));
-      return out;
+      var m = new Map();
+      for (var id in data) if (this.has(id)) m.set(id, this.get(id));
+      return m.values();
     };
     this.entries = function() {
-      var out = [];
-      for (var id in data) if (this.has(id)) out.push([id, this.get(id)]);
-      return out;
+      var m = new Map();
+      for (var id in data) if (this.has(id)) m.set(id, this.get(id));
+      return m.entries();
     };
     this.forEach = function(fun, self) {
       if (typeof self == 'undefined') self = this;
       for (var id in data) if (this.has(id)) fun.call(self, this.get(id), id, this);
     };
     Object.defineProperty(this, 'size', {
-      get: function() { return this.keys().length; },
+      get: function() {
+        var len = 0;
+        for (var id in data) if (this.has(id)) len++;
+        return len;
+      },
       enumerable: true
     });
   }
