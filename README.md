@@ -56,6 +56,10 @@ Install: `npm install web-midi-test --save-dev`
     port.connect();
     port.emit([0x90, 0x40, 0x7f]);
     //...
+    port.busy = true;  // "another application" captured the port
+    // Web MIDI can see the port, but can not connect to it
+    port.busy = false; // "another application" released the port
+    //...
     port.disconnect();
 
 #### MIDI Destination (Virtual MIDI-Out)
@@ -63,5 +67,9 @@ Install: `npm install web-midi-test --save-dev`
     var port = new WMT.MidiDst('VIRTUAL MIDI-Out');
     port.receive = function(msg) { console.log('received:', msg); };
     port.connect();
+    //...
+    port.busy = true;  // "another application" captured the port
+    // Web MIDI can see the port, but can not connect to it
+    port.busy = false; // "another application" released the port
     //...
     port.disconnect();
