@@ -1,9 +1,21 @@
 if (typeof require != 'undefined') {
   var assert = require('assert');
   var WMT = require('..');
+  var performance = { now: WMT.now };
 }
 
 function noop() {}
+
+function Sequence(list, done) {
+  this.done = done;
+  this.list = list.slice();
+  this.count = 0;
+  this.validate = function(data) {
+    if (this.count < this.list.length) assert.equal(data.slice().toString(), this.list[this.count].toString());
+    this.count++;
+    if (this.count == this.list.length) this.done();
+  };
+}
 
 describe('midi: false', function() {
   it('requestMIDIAccess() returns error', function(done) {
@@ -313,6 +325,28 @@ describe('MIDI-Out', function() {
     WMT.requestMIDIAccess().then((midi) => {
       midi.outputs.forEach((port) => {
         if (port.name == name1) { port.send([0x90, 0x40, 0x7f]); port.clear(); }
+      });
+    }, noop);
+  });
+  it('send delayed MIDI message to MIDIOutput', function(done) {
+    var notes = [
+      [0x90, 0x40, 0x7f],
+      [0x90, 0x41, 0x7f],
+      [0x90, 0x42, 0x7f],
+      [0x90, 0x43, 0x7f],
+      [0x90, 0x44, 0x7f],
+      [0x90, 0x45, 0x7f],
+      [0x90, 0x46, 0x7f],
+      [0x90, 0x47, 0x7f]
+    ];
+    var seq = new Sequence(notes, function() { midiout1.receive = noop; done(); });
+    midiout1.receive = (msg) => { seq.validate(msg); };
+    WMT.requestMIDIAccess().then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          var now = performance.now();
+          for (var i = notes.length - 1; i >= 0; i--) port.send(notes[i], now + i * 10);
+        }
       });
     }, noop);
   });
