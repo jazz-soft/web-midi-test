@@ -262,7 +262,6 @@
       });
     };
     this.close = function() {
-      _open = false;
       return new Promise((resolve, reject) => {
         var arr = [];
         for (var i = 0; i < _Src[port.id].pending.length; i++) {
