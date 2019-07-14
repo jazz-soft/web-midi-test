@@ -330,14 +330,8 @@ describe('MIDI-Out', function() {
   });
   it('send delayed MIDI message to MIDIOutput', function(done) {
     var notes = [
-      [0x90, 0x40, 0x7f],
-      [0x90, 0x41, 0x7f],
-      [0x90, 0x42, 0x7f],
-      [0x90, 0x43, 0x7f],
-      [0x90, 0x44, 0x7f],
-      [0x90, 0x45, 0x7f],
-      [0x90, 0x46, 0x7f],
-      [0x90, 0x47, 0x7f]
+      [0x90, 0x40, 0x7f], [0x90, 0x41, 0x7f], [0x90, 0x42, 0x7f], [0x90, 0x43, 0x7f],
+      [0x90, 0x44, 0x7f], [0x90, 0x45, 0x7f], [0x90, 0x46, 0x7f], [0x90, 0x47, 0x7f]
     ];
     var seq = new Sequence(notes, function() { midiout1.receive = noop; done(); });
     midiout1.receive = (msg) => { seq.validate(msg); };
@@ -346,6 +340,22 @@ describe('MIDI-Out', function() {
         if (port.name == name1) {
           var now = performance.now();
           for (var i = notes.length - 1; i >= 0; i--) port.send(notes[i], now + i * 10);
+        }
+      });
+    }, noop);
+  });
+  it('clear MIDIOutput', function(done) {
+    var notes1 = [[0x90, 0x40, 0x7f], [0x90, 0x41, 0x7f], [0x90, 0x42, 0x7f], [0x90, 0x43, 0x7f]];
+    var notes2 = [[0x90, 0x44, 0x7f], [0x90, 0x45, 0x7f], [0x90, 0x46, 0x7f], [0x90, 0x47, 0x7f]];
+    var seq = new Sequence(notes2, function() { midiout1.receive = noop; done(); });
+    midiout1.receive = (msg) => { seq.validate(msg); };
+    WMT.requestMIDIAccess().then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          var now = performance.now();
+          for (var i = 0; i < notes1.length; i++) port.send(notes1[i], now + i * 10 + 10);
+          port.close();
+          for (var i = 0; i < notes2.length; i++) port.send(notes2[i], now + i * 10 + 10);
         }
       });
     }, noop);

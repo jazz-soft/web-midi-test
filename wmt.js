@@ -45,50 +45,48 @@
       }
       else break;
     }
+    if (_heap.length == 1) {
+      _interval = setInterval(_tick, 1);
+    }
   }
 
   function _remove(i) {
     var n = _heap.length - 1;
     var x = _heap[n];
     _heap.length = n;
-    if (i == n) return;
-    _heap[i] = x;
-    while (true) {
-      n = i * 2 + 2;
-      if (n < _heap.length && _heap[n][0] < _heap[n - 1][0] && _heap[n][0] < _heap[i][0]) {
-        _heap[i] = _heap[n];
-        _heap[n] = x;
-        i = n;
-      }
-      else {
-        n--;
-        if (n < _heap.length && _heap[n][0] < _heap[i][0]) {
+    if (i < n) {
+      _heap[i] = x;
+      while (true) {
+        n = i * 2 + 2;
+        if (n < _heap.length && _heap[n][0] < _heap[n - 1][0] && _heap[n][0] < _heap[i][0]) {
           _heap[i] = _heap[n];
           _heap[n] = x;
           i = n;
         }
-        else break;
+        else {
+          n--;
+          if (n < _heap.length && _heap[n][0] < _heap[i][0]) {
+            _heap[i] = _heap[n];
+            _heap[n] = x;
+            i = n;
+          }
+          else break;
+        }
       }
-    }
-  }
-
-  function _schedule(t, port, data) {
-    _insert([t, port, data]);
-    if (_heap.length == 1) {
-      _interval = setInterval(_tick, 1);
-    }
-  }
-
-  function _tick() {
-    while (_heap.length && _heap[0][0] <= _now()) {
-      _heap[0][1].receive(_heap[0][2]);
-      _remove(0);
     }
     if (!_heap.length) clearInterval(_interval);
   }
 
-  function MIDIMessageEvent(arr) {
-    this.data = arr;
+  function _tick() {
+    while (_heap.length && _heap[0][0] <= _now()) {
+      _heap[0][1].send(_heap[0][2]);
+      _remove(0);
+    }
+  }
+
+  function MIDIMessageEvent(data) {
+    this.data = new Uint8Array(data);
+    this.timeStamp = _now();
     Object.freeze(this);
   }
 
@@ -312,7 +310,7 @@
     _readonly(this, 'version', port.version);
     this.send = function(arr, t) {
       if (!_open) self.open().then(_noop, _noop);
-      if (t > _now()) _schedule(t, port, arr);
+      if (t > _now()) _insert([t, this, arr]);
       else port.receive(arr);
     };
     this.open = function() {
@@ -357,7 +355,9 @@
         resolve(self);
       });
     };
-    this.clear = _noop;
+    this.clear = function() {
+      for (var i = _heap.length - 1; i >= 0; i--) if (_heap[i][1] == this) _remove(i);
+    };
     Object.defineProperty(this, 'state', {
       get: function() { return port.connected ? 'connected' : 'disconnected'; },
       enumerable: true
