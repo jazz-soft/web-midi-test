@@ -79,7 +79,7 @@
 
   function _tick() {
     while (_heap.length && _heap[0][0] <= _now()) {
-      _heap[0][1].send(_heap[0][2]);
+      if (_heap[0][2].connected) _heap[0][2].receive(_heap[0][3])
       _remove(0);
     }
   }
@@ -298,6 +298,16 @@
     Object.freeze(this);
   }
 
+  function _validate(arr, sysex) {
+    var i, j;
+    var msg;
+    var data = [];
+    for (i = 0; i < arr.length; i++) {
+
+    }
+    return [arr];
+  }
+
   function MIDIOutput(access, port) {
     var self = this;
     var _open = false;
@@ -308,9 +318,12 @@
     _readonly(this, 'manufacturer', port.manufacturer);
     _readonly(this, 'version', port.version);
     this.send = function(arr, t) {
+      var data = _validate(arr, this.sysexEnabled);
+      if (!port.connected) throw new DOMException('InvalidStateError', 'Port is not connected', 11);
       if (!_open) self.open().then(_noop, _noop);
-      if (t > _now()) _insert([t, this, arr]);
-      else port.receive(arr);
+      var i;
+      if (t > _now()) for (i = 0; i < data.length; i++) _insert([t, this, port, data[i]]);
+      else for (i = 0; i < data.length; i++) port.receive(data[i]);
     };
     this.open = function() {
       return new Promise((resolve, reject) => {
