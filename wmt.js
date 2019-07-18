@@ -298,14 +298,51 @@
     Object.freeze(this);
   }
 
+  function _datalen(x) {
+    if (x >= 0x80 && x <= 0xbf || x >= 0xe0 && x <= 0xef || x == 0xf2) return 2;
+    if (x >= 0xc0 && x <= 0xdf || x == 0xf1 || x == 0xf3) return 1;
+    return 0;
+  }
+
+  var _epr = "Failed to execute 'send' on 'MIDIOutput': ";
+
   function _validate(arr, sysex) {
-    var i, j;
+    var i, j, k;
     var msg;
     var data = [];
     for (i = 0; i < arr.length; i++) {
-
+      if (arr[i] != parseInt(arr[i]) || arr[i] < 0 || arr[i] > 255) throw TypeError(_epr + arr[i] + ' is not a UInt8 value.');
     }
-    return [arr];
+    k = 0;
+    for (i = 0; i < arr.length; i++) {
+      if (!k) {
+        if (arr[i] < 0x80) throw TypeError(_epr + 'Running status is not allowed at index ' + i + '(' + arr[i] + ').');
+        if (arr[i] == 0xf7) throw TypeError(_epr + 'Unexpected end of system exclusive message at index ' + i + '(' + arr[i] + ').');
+        msg = [arr[i]];
+        data.push(msg);
+        if (arr[i] == 0xf0) {
+          if (!sysex) throw new DOMException(_epr + 'InvalidAccessError', 'System exclusive messag is not allowed at index ' + i + '(' + arr[i] + ').', 15);
+          k = -1;
+          for (; i < arr.length; i++) {
+            msg.push(arr[i]);
+            if (arr[i] == 0xf7) {
+              k = 0;
+              break;
+            }
+          }
+        }
+        else {
+          k = _datalen(arr[i]);
+        }
+      }
+      else {
+        if (arr[i] > 0x7f) throw TypeError(_epr + 'Unexpected status byte at index ' + i + '(' + arr[i] + ').');
+        msg.push(arr[i]);
+        k--;
+      }
+    }
+    if (k) throw TypeError(_epr + 'Message is incomplete');
+    return [data];
   }
 
   function MIDIOutput(access, port) {
