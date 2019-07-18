@@ -484,4 +484,112 @@ describe('MIDI-Out', function() {
       setTimeout(() => { midiout.disconnect(); setTimeout(() => { midiout.connect(); }, 10); }, 10);
     }, noop);
   });
+  // MIDI validation 
+  it('MIDI validation: sysex alloved', function(done) {
+    midiout1.connect();
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          port.send([0xfe, 0xc0, 0x10, 0x90, 0x40, 0x7f, 0x80, 0x40, 0x00, 0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7]);
+          done();
+        }
+      });
+    }, noop);
+  });
+  it('MIDI validation: sysex not alloved', function(done) {
+    midiout1.connect();
+    WMT.requestMIDIAccess().then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          try {
+            port.send([0xfe, 0xc0, 0x10, 0x90, 0x40, 0x7f, 0x80, 0x40, 0x00, 0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7]);
+          }
+          catch (err) {
+            assert.equal(err.name, 'InvalidAccessError');
+            done();
+          }
+        }
+      });
+    }, noop);
+  });
+  it('MIDI validation: incomplete message', function(done) {
+    midiout1.connect();
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          try {
+            port.send([0xfe, 0xc0, /*0x10,*/ 0x90, 0x40, 0x7f, 0x80, 0x40, 0x00, 0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7]);
+          }
+          catch (err) {
+            assert.equal(err.name, 'TypeError');
+            done();
+          }
+        }
+      });
+    }, noop);
+  });
+  it('MIDI validation: incomplete sysex', function(done) {
+    midiout1.connect();
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          try {
+            port.send([0xfe, 0xc0, 0x10, 0x90, 0x40, 0x7f, 0x80, 0x40, 0x00, 0xf0, 0x7e, 0x7f, 0x06, 0x01, /*0xf7*/]);
+          }
+          catch (err) {
+            assert.equal(err.name, 'TypeError');
+            done();
+          }
+        }
+      });
+    }, noop);
+  });
+  it('MIDI validation: unexpected running status', function(done) {
+    midiout1.connect();
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          try {
+            port.send([/*0xfe, 0xc0,*/ 0x10, 0x90, 0x40, 0x7f, 0x80, 0x40, 0x00, 0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7]);
+          }
+          catch (err) {
+            assert.equal(err.name, 'TypeError');
+            done();
+          }
+        }
+      });
+    }, noop);
+  });
+  it('MIDI validation: unexpected sysex terminator', function(done) {
+    midiout1.connect();
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          try {
+            port.send([0xf7]);
+          }
+          catch (err) {
+            assert.equal(err.name, 'TypeError');
+            done();
+          }
+        }
+      });
+    }, noop);
+  });
+  it('MIDI validation: value out of range', function(done) {
+    midiout1.connect();
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      midi.outputs.forEach((port) => {
+        if (port.name == name1) {
+          try {
+            port.send([-1]);
+          }
+          catch (err) {
+            assert.equal(err.name, 'TypeError');
+            done();
+          }
+        }
+      });
+    }, noop);
+  });
 });

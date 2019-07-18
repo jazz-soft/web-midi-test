@@ -316,12 +316,12 @@
     k = 0;
     for (i = 0; i < arr.length; i++) {
       if (!k) {
-        if (arr[i] < 0x80) throw TypeError(_epr + 'Running status is not allowed at index ' + i + '(' + arr[i] + ').');
-        if (arr[i] == 0xf7) throw TypeError(_epr + 'Unexpected end of system exclusive message at index ' + i + '(' + arr[i] + ').');
+        if (arr[i] < 0x80) throw TypeError(_epr + 'Running status is not allowed at index ' + i + ' (' + arr[i] + ').');
+        if (arr[i] == 0xf7) throw TypeError(_epr + 'Unexpected end of system exclusive message at index ' + i + ' (' + arr[i] + ').');
         msg = [arr[i]];
         data.push(msg);
         if (arr[i] == 0xf0) {
-          if (!sysex) throw new DOMException(_epr + 'InvalidAccessError', 'System exclusive messag is not allowed at index ' + i + '(' + arr[i] + ').', 15);
+          if (!sysex) throw new DOMException('InvalidAccessError', _epr + 'System exclusive messag is not allowed at index ' + i + ' (' + arr[i] + ').', 15);
           k = -1;
           for (; i < arr.length; i++) {
             msg.push(arr[i]);
@@ -336,7 +336,7 @@
         }
       }
       else {
-        if (arr[i] > 0x7f) throw TypeError(_epr + 'Unexpected status byte at index ' + i + '(' + arr[i] + ').');
+        if (arr[i] > 0x7f) throw TypeError(_epr + 'Unexpected status byte at index ' + i + ' (' + arr[i] + ').');
         msg.push(arr[i]);
         k--;
       }
@@ -355,7 +355,7 @@
     _readonly(this, 'manufacturer', port.manufacturer);
     _readonly(this, 'version', port.version);
     this.send = function(arr, t) {
-      var data = _validate(arr, this.sysexEnabled);
+      var data = _validate(arr, access.sysexEnabled);
       if (!port.connected) throw new DOMException('InvalidStateError', 'Port is not connected', 11);
       if (!_open) self.open().then(_noop, _noop);
       var i;
