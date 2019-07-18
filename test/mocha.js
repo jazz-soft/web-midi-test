@@ -349,13 +349,14 @@ describe('MIDI-Out', function() {
     var notes2 = [[0x90, 0x44, 0x7f], [0x90, 0x45, 0x7f], [0x90, 0x46, 0x7f], [0x90, 0x47, 0x7f]];
     var seq = new Sequence(notes2, function() { midiout1.receive = noop; done(); });
     midiout1.receive = (msg) => { seq.validate(msg); };
+    var i;
     WMT.requestMIDIAccess().then((midi) => {
       midi.outputs.forEach((port) => {
         if (port.name == name1) {
           var now = performance.now();
-          for (var i = 0; i < notes1.length; i++) port.send(notes1[i], now + i * 10 + 10);
+          for (i = 0; i < notes1.length; i++) port.send(notes1[i], now + i * 10 + 10);
           port.close();
-          for (var i = 0; i < notes2.length; i++) port.send(notes2[i], now + i * 10 + 10);
+          for (i = 0; i < notes2.length; i++) port.send(notes2[i], now + i * 10 + 10);
         }
       });
     }, noop);
@@ -484,7 +485,7 @@ describe('MIDI-Out', function() {
       setTimeout(() => { midiout.disconnect(); setTimeout(() => { midiout.connect(); }, 10); }, 10);
     }, noop);
   });
-  // MIDI validation 
+  // MIDI validation
   it('MIDI validation: sysex alloved', function(done) {
     midiout1.connect();
     WMT.requestMIDIAccess({ sysex: true }).then((midi) => {

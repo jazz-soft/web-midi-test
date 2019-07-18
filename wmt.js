@@ -307,7 +307,7 @@
   var _epr = "Failed to execute 'send' on 'MIDIOutput': ";
 
   function _validate(arr, sysex) {
-    var i, j, k;
+    var i, k;
     var msg;
     var data = [];
     for (i = 0; i < arr.length; i++) {
