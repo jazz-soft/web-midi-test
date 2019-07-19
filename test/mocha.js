@@ -268,6 +268,60 @@ describe('MIDI-In', function() {
       setTimeout(() => { midiin.disconnect(); setTimeout(() => { midiin.connect(); }, 10); }, 10);
     }, noop);
   });
+  it('split MIDI messages: sysex alloved', function(done) {
+    midiin1.connect();
+    WMT.requestMIDIAccess({ sysex: true }).then((midi) => {
+      var myport;
+      var notes = [
+        [0xfe],
+        [0xc0, 0x10],
+        [0x90, 0x40, 0x7f],
+        [0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7],
+        [0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7],
+        [0x80, 0x40, 0x00]
+      ];
+      var seq = new Sequence(notes, function() { myport.onmidimessage = noop; done(); });
+      midi.inputs.forEach((port) => {
+        if (port.name == name1) {
+          myport = port;
+          port.onmidimessage = (msg) => { seq.validate(new Array(msg.data)); };
+        }
+      });
+      setTimeout(() => {
+        midiin1.emit([0x00, 0xfe, 0x00, 0xc0]);
+        midiin1.emit([0x10, 0x90, 0x40, 0x7f]);
+        midiin1.emit([0xf0, 0x7e, 0x7f, 0x06]);
+        midiin1.emit([0x01, 0xf7, 0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7, 0xf7, 0x80]);
+        midiin1.emit([0x40, 0x00, 0x00]);
+      }, 10);
+    }, noop);
+  });
+  it('split MIDI messages: sysex ignored', function(done) {
+    midiin1.connect();
+    WMT.requestMIDIAccess().then((midi) => {
+      var myport;
+      var notes = [
+        [0xfe],
+        [0xc0, 0x10],
+        [0x90, 0x40, 0x7f],
+        [0x80, 0x40, 0x00]
+      ];
+      var seq = new Sequence(notes, function() { myport.onmidimessage = noop; done(); });
+      midi.inputs.forEach((port) => {
+        if (port.name == name1) {
+          myport = port;
+          port.onmidimessage = (msg) => { seq.validate(new Array(msg.data)); };
+        }
+      });
+      setTimeout(() => {
+        midiin1.emit([0x00, 0xfe, 0x00, 0xc0]);
+        midiin1.emit([0x10, 0x90, 0x40, 0x7f]);
+        midiin1.emit([0xf0, 0x7e, 0x7f, 0x06]);
+        midiin1.emit([0x01, 0xf7, 0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7, 0xf7, 0x80]);
+        midiin1.emit([0x40, 0x00, 0x00]);
+      }, 10);
+    }, noop);
+  });
 });
 
 describe('MIDI-Out', function() {

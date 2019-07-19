@@ -96,7 +96,7 @@
     q.splice(0, i);
     if (!q.length) return;
     if (q[0] == 0xf0) {
-      for (i = 1; i < q.length; i++) if (q[i] == 0x7f) break;
+      for (i = 1; i < q.length; i++) if (q[i] == 0xf7) break;
       if (i < q.length) return q.splice(0, i + 1);
     }
     else {
@@ -129,9 +129,9 @@
       _queue = _queue.concat(arr);
       for (msg = _split(_queue); msg; msg = _split(_queue)) {
         for (i = 0; i < _Acc.length; i++) {
-          if (arr[0] != 0xf0 || _Acc[i].sysexEnabled) {
+          if (msg[0] != 0xf0 || _Acc[i].sysexEnabled) {
             p = _Acc[i].inputs.get(id);
-            if (p.onmidimessage && p.connection == 'open') p.onmidimessage(new MIDIMessageEvent(arr));
+            if (p.onmidimessage && p.connection == 'open') p.onmidimessage(new MIDIMessageEvent(msg));
           }
         }
       }
