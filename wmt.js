@@ -90,12 +90,32 @@
     Object.freeze(this);
   }
 
+  function _split(q) {
+    var i, k;
+    for (i = 0; i < q.length; i++) if (q[i] == parseInt(q[i]) && q[i] >= 0x80 && q[i] <= 0xff && q[i] != 0xf7) break;
+    q.splice(0, i);
+    if (!q.length) return;
+    if (q[0] == 0xf0) {
+      for (i = 1; i < q.length; i++) if (q[i] == 0x7f) break;
+      if (i < q.length) return q.splice(0, i + 1);
+    }
+    else {
+      k = _datalen(q[0]) + 1;
+      if (k <= q.length) {
+        for (i = 1; i < k; i++) if (q[i] != parseInt(q[i]) || q[i] < 0 || q[i] >= 0x80) break;
+        if (i == k) return q.splice(0, i);
+        else q.splice(0, i);
+      }
+    }
+  }
+
   function MidiSrc(name, man, ver) {
     if (!(this instanceof MidiSrc)) return new MidiSrc(name, man, ver);
     _readonly(this, 'name', '' + name);
     _readonly(this, 'manufacturer', '' + man);
     _readonly(this, 'version', '' + ver);
     var id;
+    var _queue = [];
     for (var n = 0; true; n++) {
       id = this.name + '/' + n;
       if (!_Src[id]) {
@@ -104,6 +124,18 @@
         break;
       }
     }
+    this.emit = function(arr) {
+      var i, p, msg;
+      _queue = _queue.concat(arr);
+      for (msg = _split(_queue); msg; msg = _split(_queue)) {
+        for (i = 0; i < _Acc.length; i++) {
+          if (arr[0] != 0xf0 || _Acc[i].sysexEnabled) {
+            p = _Acc[i].inputs.get(id);
+            if (p.onmidimessage && p.connection == 'open') p.onmidimessage(new MIDIMessageEvent(arr));
+          }
+        }
+      }
+    };
     Object.defineProperty(this, 'connected', { get: function() { return _Src[id].connected; }, enumerable: true });
     Object.defineProperty(this, 'busy', {
       get: function() { return _Src[id].busy; },
@@ -148,14 +180,6 @@
       _Src[this.id].connected = false;
       for (i = 0; i < _Src[this.id].ports.length; i++) _changed(_Src[this.id].ports[i], _Src[this.id].ports[i]);
       for (i = 0; i < x.length; i++) _changed(x[i][0], x[i][1]);
-    }
-  }
-
-  MidiSrc.prototype.emit = function(arr) {
-    for (var i = 0; i < _Src[this.id].ports.length; i++) {
-      if (_Src[this.id].ports[i].onmidimessage && _Src[this.id].ports[i].connection == 'open') {
-        _Src[this.id].ports[i].onmidimessage(new MIDIMessageEvent(arr));
-      }
     }
   }
 
