@@ -92,16 +92,18 @@
 
   function _split(q) {
     var i, k;
-    for (i = 0; i < q.length; i++) if (q[i] == parseInt(q[i]) && q[i] >= 0x80 && q[i] <= 0xff && q[i] != 0xf7) break;
-    q.splice(0, i);
-    if (!q.length) return;
-    if (q[0] == 0xf0) {
-      for (i = 1; i < q.length; i++) if (q[i] == 0xf7) break;
-      if (i < q.length) return q.splice(0, i + 1);
-    }
-    else {
-      k = _datalen(q[0]) + 1;
-      if (k <= q.length) {
+    while (q.length) {
+      for (i = 0; i < q.length; i++) if (q[i] == parseInt(q[i]) && q[i] >= 0x80 && q[i] <= 0xff && q[i] != 0xf7) break;
+      q.splice(0, i);
+      if (!q.length) return;
+      if (q[0] == 0xf0) {
+        for (i = 1; i < q.length; i++) if (q[i] == 0xf7) break;
+        if (i == q.length) return;
+        return q.splice(0, i + 1);
+      }
+      else {
+        k = _datalen(q[0]) + 1;
+        if (k > q.length) return;
         for (i = 1; i < k; i++) if (q[i] != parseInt(q[i]) || q[i] < 0 || q[i] >= 0x80) break;
         if (i == k) return q.splice(0, i);
         else q.splice(0, i);

@@ -154,6 +154,7 @@ describe('MIDI-In', function() {
         assert.equal(evt.port.name, name);
         midi.onstatechange = noop;
         midiin.disconnect();
+        midiin.disconnect();
         done();
       };
       setTimeout(() => { midiin.connect(); }, 10);
@@ -292,7 +293,7 @@ describe('MIDI-In', function() {
         midiin1.emit([0x10, 0x90, 0x40, 0x7f]);
         midiin1.emit([0xf0, 0x7e, 0x7f, 0x06]);
         midiin1.emit([0x01, 0xf7, 0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7, 0xf7, 0x80]);
-        midiin1.emit([0x40, 0x00, 0x00]);
+        midiin1.emit([0x80, 0x40, 0x00, 0x00]);
       }, 10);
     }, noop);
   });
@@ -318,7 +319,7 @@ describe('MIDI-In', function() {
         midiin1.emit([0x10, 0x90, 0x40, 0x7f]);
         midiin1.emit([0xf0, 0x7e, 0x7f, 0x06]);
         midiin1.emit([0x01, 0xf7, 0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7, 0xf7, 0x80]);
-        midiin1.emit([0x40, 0x00, 0x00]);
+        midiin1.emit([0x80, 0x40, 0x00, 0x00]);
       }, 10);
     }, noop);
   });
@@ -422,6 +423,7 @@ describe('MIDI-Out', function() {
       midi.onstatechange = (evt) => {
         assert.equal(evt.port.name, name);
         midi.onstatechange = noop;
+        midiout.disconnect();
         midiout.disconnect();
         done();
       };
