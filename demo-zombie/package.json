@@ -1,0 +1,16 @@
+{
+  "name": "demo-zombie",
+  "version": "0.0.0",
+  "description": "Demo: Using web-midi-test with Zombie.js",
+  "main": "index.js",
+  "author": "jazz-soft (http://jazz-soft.net/)",
+  "license": "MIT",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "dependencies": {
+    "web-midi-test": "^1.0.0",
+    "zombie": "^6.1.4"
+  },
+  "private": true
+}

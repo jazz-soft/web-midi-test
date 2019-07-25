@@ -34,15 +34,11 @@ function onSuccess(midi) {
 }
 
 function onFail(err) {
-  console.log('Web MIDI does not work:', err.message);
+  console.log('Web MIDI does not work:', err);
 }
 
-try {
-  navigator.requestMIDIAccess().then(onSuccess, onFail);
-}
-catch (err) {
-  console.log('Web MIDI does not work:', err.message);
-}
+navigator.requestMIDIAccess().then(onSuccess, onFail);
+
 --></script>
 
 </body>
