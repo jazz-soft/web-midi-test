@@ -1,0 +1,16 @@
+{
+  "name": "demo-jsdom",
+  "version": "0.0.0",
+  "description": "Demo: Using web-midi-test with JSDOM",
+  "main": "index.js",
+  "author": "jazz-soft (http://jazz-soft.net/)",
+  "license": "MIT",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "dependencies": {
+    "jsdom": "^15.1.1",
+    "web-midi-test": "^1.0.0"
+  },
+  "private": true
+}
