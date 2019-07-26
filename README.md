@@ -31,21 +31,24 @@ Install: `npm install web-midi-test --save-dev`
     }
     // ...
 
+#### With [JSDOM](https://github.com/jazz-soft/web-midi-test/tree/master/demo-jsdom)  
+#### With [Zombie.js](https://github.com/jazz-soft/web-midi-test/tree/master/demo-zombie)
+
 ## API
 #### MIDI access
 
     function onSuccess() { console.log('Success!'); }
     function onFail() { console.log('Fail!'); }
-    
+
     // normal scenario
     WMT.requestMIDIAccess().then(onSuccess, onFail); // Success!
     WMT.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail); // Success!
-    
+
     // no sysex permission scenario
     WMT.sysex = false;
     WMT.requestMIDIAccess().then(onSuccess, onFail); // Success!
     WMT.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail); // Fail!
-    
+
     // no midi permission scenario
     WMT.midi = false;
     WMT.requestMIDIAccess().then(onSuccess, onFail); // Fail!
