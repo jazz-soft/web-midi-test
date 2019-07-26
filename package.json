@@ -1,6 +1,6 @@
 {
   "name": "web-midi-test",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fake Web MIDI API for testing Web MIDI applications",
   "main": "wmt.js",
   "scripts": {
