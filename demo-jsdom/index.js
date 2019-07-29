@@ -11,6 +11,7 @@ midi_out1.connect();
 midi_out2.connect();
 
 JSDOM.fromFile('test.html', {
+  resources: 'usable',
   runScripts: 'dangerously',
   beforeParse: window => { window.navigator.requestMIDIAccess = WMT.requestMIDIAccess; }
 }).then(dom => { console.log('Thank you!'); });
