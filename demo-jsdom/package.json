@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "jsdom": "^15.1.1",
-    "web-midi-test": "^1.0.1"
+    "web-midi-test": "^1.0.2"
   },
   "private": true
 }
