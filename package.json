@@ -1,6 +1,6 @@
 {
   "name": "web-midi-test",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Fake Web MIDI API for testing Web MIDI applications",
   "main": "wmt.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "author": "jazz-soft (https://jazz-soft.net/)",
   "devDependencies": {
     "coveralls": "^3.0.6",
-    "eslint": "^6.1.0",
+    "eslint": "^6.2.1",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1"
   },

@@ -16,7 +16,7 @@
   }
 
   function _changed(target, data) {
-    if (target.onstatechange) setTimeout(function() { target.onstatechange(new MIDIConnectionEvent(data)); }, 0);
+    if (target.onstatechange) target.onstatechange(new MIDIConnectionEvent(data));
   }
 
   function _noop() {}
