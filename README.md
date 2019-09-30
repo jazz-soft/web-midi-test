@@ -14,14 +14,14 @@ See also: [**midi-test**](https://github.com/jazz-soft/midi-test)
 Install: `npm install web-midi-test --save-dev`
 
 ## Usage
-#### In Node.js
+#### Node.js
 
     var WMT = require('web-midi-test');
     var navigator = { requestMIDIAccess: WMT.requestMIDIAccess };
     var performance = { now: WMT.now }; // if required...
     // ...
 
-#### In HTML
+#### HTML
 
     <script src="node_modules/web-midi-test/wmt.js"></script>
     // this will add an object named WMT into the global scope
@@ -29,6 +29,11 @@ Install: `npm install web-midi-test --save-dev`
     if (typeof navigator.requestMIDIAccess == 'undefined') {
       navigator.requestMIDIAccess = WMT.requestMIDIAccess;
     }
+    // ...
+
+#### TypeScript
+
+    import WMT = require('web-midi-test');
     // ...
 
 #### With [JSDOM](https://github.com/jazz-soft/web-midi-test/tree/master/demo-jsdom)  
