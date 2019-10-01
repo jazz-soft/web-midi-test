@@ -32,11 +32,10 @@ Install: `npm install web-midi-test --save-dev`
     // ...
 
 #### TypeScript
+`tsc myscript.ts --lib es2015,dom`
 
     import WMT = require('web-midi-test');
     // ...
-
-`tsc myscript.ts --lib es2015,dom`
 
 #### With [JSDOM](https://github.com/jazz-soft/web-midi-test/tree/master/demo-jsdom)  
 #### With [Zombie.js](https://github.com/jazz-soft/web-midi-test/tree/master/demo-zombie)
