@@ -42,7 +42,7 @@ interface MidiDstConstructor {
   (name: string): MidiDst;
 }
 
-interface WMT {
+interface WebMidiTest {
   /** MIDI enabled */
   midi: boolean;
   /** MIDI SysEx enabled */
@@ -52,6 +52,6 @@ interface WMT {
   /** Invoke Web MIDI API */
   readonly requestMIDIAccess: (options?: WebMidi.MIDIOptions) => Promise<WebMidi.MIDIAccess>;
 }
-declare const wmt: WMT;
+declare const wmt: WebMidiTest;
 
 export = wmt;
