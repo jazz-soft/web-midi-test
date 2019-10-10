@@ -27,19 +27,21 @@ interface MidiDst {
   /** Port is busy */
   busy: boolean;
 }
-
-interface MidiSrcConstructor {
-  /** Create new MidiSrc object */
-  new (name: string): MidiSrc;
-  /** Create new MidiSrc object */
-  (name: string): MidiSrc;
+declare namespace MidiSrc {
+  interface Constructor {
+    /** Create new MidiDst object */
+    new (name: string): MidiSrc;
+    /** Create new MidiDst object */
+    (name: string): MidiSrc;
+  }
 }
-
-interface MidiDstConstructor {
-  /** Create new MidiDst object */
-  new (name: string): MidiDst;
-  /** Create new MidiDst object */
-  (name: string): MidiDst;
+declare namespace MidiDst {
+  interface Constructor {
+    /** Create new MidiDst object */
+    new (name: string): MidiDst;
+    /** Create new MidiDst object */
+    (name: string): MidiDst;
+  }
 }
 
 interface WebMidiTest {
@@ -47,8 +49,8 @@ interface WebMidiTest {
   midi: boolean;
   /** MIDI SysEx enabled */
   sysex: boolean;
-  readonly MidiSrc: MidiSrcConstructor;
-  readonly MidiDst: MidiDstConstructor;
+  readonly MidiSrc: MidiSrc.Constructor;
+  readonly MidiDst: MidiDst.Constructor;
   /** Invoke Web MIDI API */
   readonly requestMIDIAccess: (options?: WebMidi.MIDIOptions) => Promise<WebMidi.MIDIAccess>;
 }
