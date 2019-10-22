@@ -1,6 +1,6 @@
 {
   "name": "web-midi-test",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Fake Web MIDI API for testing Web MIDI applications",
   "main": "wmt.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "devDependencies": {
     "coveralls": "^3.0.7",
     "eslint": "^6.5.1",
-    "mocha": "^6.2.1",
+    "mocha": "^6.2.2",
     "nyc": "^14.1.1"
   },
   "repository": {
