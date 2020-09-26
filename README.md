@@ -16,26 +16,32 @@ Install: `npm install web-midi-test --save-dev`
 ## Usage
 #### Node.js
 
-    var WMT = require('web-midi-test');
-    var navigator = { requestMIDIAccess: WMT.requestMIDIAccess };
-    var performance = { now: WMT.now }; // if required...
-    // ...
+```js
+var WMT = require('web-midi-test');
+var navigator = { requestMIDIAccess: WMT.requestMIDIAccess };
+var performance = { now: WMT.now }; // if required...
+// ...
+```
 
 #### HTML
 
-    <script src="node_modules/web-midi-test/wmt.js"></script>
-    // this will add an object named WMT into the global scope
-    // ...
-    if (typeof navigator.requestMIDIAccess == 'undefined') {
-      navigator.requestMIDIAccess = WMT.requestMIDIAccess;
-    }
-    // ...
+```html
+<script src="node_modules/web-midi-test/wmt.js"></script>
+// this will add an object named WMT into the global scope
+// ...
+if (typeof navigator.requestMIDIAccess == 'undefined') {
+  navigator.requestMIDIAccess = WMT.requestMIDIAccess;
+}
+// ...
+```
 
 #### TypeScript
 `tsc myscript.ts --lib es2015,dom`
 
-    import * as WMT from 'web-midi-test';
-    // ...
+```ts
+import * as WMT from 'web-midi-test';
+// ...
+```
 
 #### With [JSDOM](https://github.com/jazz-soft/web-midi-test/tree/master/demo-jsdom)  
 #### With [Zombie.js](https://github.com/jazz-soft/web-midi-test/tree/master/demo-zombie)
@@ -43,42 +49,48 @@ Install: `npm install web-midi-test --save-dev`
 ## API
 #### MIDI access
 
-    function onSuccess() { console.log('Success!'); }
-    function onFail() { console.log('Fail!'); }
+```js
+function onSuccess() { console.log('Success!'); }
+function onFail() { console.log('Fail!'); }
 
-    // normal scenario
-    WMT.requestMIDIAccess().then(onSuccess, onFail); // Success!
-    WMT.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail); // Success!
+// normal scenario
+WMT.requestMIDIAccess().then(onSuccess, onFail); // Success!
+WMT.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail); // Success!
 
-    // no sysex permission scenario
-    WMT.sysex = false;
-    WMT.requestMIDIAccess().then(onSuccess, onFail); // Success!
-    WMT.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail); // Fail!
+// no sysex permission scenario
+WMT.sysex = false;
+WMT.requestMIDIAccess().then(onSuccess, onFail); // Success!
+WMT.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail); // Fail!
 
-    // no midi permission scenario
-    WMT.midi = false;
-    WMT.requestMIDIAccess().then(onSuccess, onFail); // Fail!
+// no midi permission scenario
+WMT.midi = false;
+WMT.requestMIDIAccess().then(onSuccess, onFail); // Fail!
+```
 
 #### MIDI Source (Virtual MIDI-In)
 
-    var port = new WMT.MidiSrc('VIRTUAL MIDI-In');
-    port.connect();
-    port.emit([0x90, 0x40, 0x7f]);
-    //...
-    port.busy = true;  // "another application" captured the port
-    // Web MIDI can see the port, but can not connect to it
-    port.busy = false; // "another application" released the port
-    //...
-    port.disconnect();
+```js
+var port = new WMT.MidiSrc('VIRTUAL MIDI-In');
+port.connect();
+port.emit([0x90, 0x40, 0x7f]);
+//...
+port.busy = true;  // "another application" captured the port
+// Web MIDI can see the port, but can not connect to it
+port.busy = false; // "another application" released the port
+//...
+port.disconnect();
+```
 
 #### MIDI Destination (Virtual MIDI-Out)
 
-    var port = new WMT.MidiDst('VIRTUAL MIDI-Out');
-    port.receive = function(msg) { console.log('received:', msg); };
-    port.connect();
-    //...
-    port.busy = true;  // "another application" captured the port
-    // Web MIDI can see the port, but can not connect to it
-    port.busy = false; // "another application" released the port
-    //...
-    port.disconnect();
+```js
+var port = new WMT.MidiDst('VIRTUAL MIDI-Out');
+port.receive = function(msg) { console.log('received:', msg); };
+port.connect();
+//...
+port.busy = true;  // "another application" captured the port
+// Web MIDI can see the port, but can not connect to it
+port.busy = false; // "another application" released the port
+//...
+port.disconnect();
+```
