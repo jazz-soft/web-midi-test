@@ -9,7 +9,7 @@
 
 See also: [**Web MIDI API**](https://webaudio.github.io/web-midi-api/)
 
-See also: [**midi-test**](https://github.com/jazz-soft/midi-test)
+See also: [**midi-test**](https://github.com/jazz-soft/midi-test), [**test-midi-files**](https://github.com/jazz-soft/test-midi-files)
 
 Install: `npm install web-midi-test --save-dev`
 
