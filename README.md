@@ -4,6 +4,7 @@
 [![npm](https://img.shields.io/npm/dt/web-midi-test.svg)](https://www.npmjs.com/package/web-midi-test)
 [![Build Status](https://travis-ci.com/jazz-soft/web-midi-test.svg?branch=master)](https://travis-ci.com/jazz-soft/web-midi-test)
 [![Coverage Status](https://coveralls.io/repos/github/jazz-soft/web-midi-test/badge.svg?branch=master)](https://coveralls.io/github/jazz-soft/web-midi-test?branch=master)
+[![Try web-midi-test on RunKit](https://badge.runkitcdn.com/web-midi-test.svg)](https://npm.runkit.com/web-midi-test)
 
 ## Fake Web MIDI API for testing Web MIDI applications
 
