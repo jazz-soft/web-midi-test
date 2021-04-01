@@ -1,0 +1,16 @@
+{
+  "name": "demo-puppeteer",
+  "version": "0.0.0",
+  "description": "Demo: Using web-midi-test with Puppeteer",
+  "main": "index.js",
+  "author": "jazz-soft (http://jazz-soft.net/)",
+  "license": "MIT",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "dependencies": {
+    "puppeteer": "^8.0.0",
+    "web-midi-test": "^1.1.2"
+  },
+  "private": true
+}

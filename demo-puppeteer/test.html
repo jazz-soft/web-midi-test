@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+<title>Web MIDI test</title>
+</head>
+
+<body>
+
+<h1>Web MIDI test</h1>
+
+See the console output...
+
+<script><!--
+function onSuccess(midi) {
+  console.log('Web MIDI works!');
+  if (midi.inputs.size) {
+    console.log('MIDI Inputs:');
+    midi.inputs.forEach(function(port) {
+      console.log(' ', port.name);
+    });
+  }
+  else {
+    console.log('No MIDI Inputs.');
+  }
+  if (midi.outputs.size) {
+    console.log('MIDI Outputs:');
+    midi.outputs.forEach(function(port) {
+      console.log(' ', port.name);
+    });
+  }
+  else {
+    console.log('No MIDI Outputs.');
+  }
+}
+
+function onFail(err) {
+  console.log('Web MIDI does not work:', err);
+}
+
+navigator.requestMIDIAccess().then(onSuccess, onFail);
+
+--></script>
+
+</body>
+</html>
