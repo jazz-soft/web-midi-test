@@ -368,7 +368,7 @@
       }
     }
     if (k) throw TypeError(_epr + 'Message is incomplete');
-    return [data];
+    return data;
   }
 
   function MIDIOutput(access, port) {
