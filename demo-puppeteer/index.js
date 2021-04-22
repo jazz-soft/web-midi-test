@@ -1,27 +1,30 @@
 const puppeteer = require('puppeteer');
 const WMT =  require('web-midi-test');
+const JZZ = require('jzz');
+const JMH = require('jazz-midi-headless')(JZZ);
 const url = 'file://' + __dirname + '/test.html';
+const JZZcode = require('fs').readFileSync(__dirname + '/node_modules/jzz/javascript/JZZ.js', 'utf8');
 
-var midi_in1 = new WMT.MidiSrc('VIRTUAL MIDI-In 1');
-var midi_in2 = new WMT.MidiSrc('VIRTUAL MIDI-In 2');
-var midi_out1 = new WMT.MidiDst('VIRTUAL MIDI-Out 1');
-var midi_out2 = new WMT.MidiDst('VIRTUAL MIDI-Out 2');
+const midi_in1 = new WMT.MidiSrc('VIRTUAL MIDI-In 1');
+const midi_in2 = new WMT.MidiSrc('VIRTUAL MIDI-In 2');
+const midi_out1 = new WMT.MidiDst('VIRTUAL MIDI-Out 1');
+const midi_out2 = new WMT.MidiDst('VIRTUAL MIDI-Out 2');
 midi_in1.connect();
 midi_in2.connect();
 midi_out1.connect();
 midi_out2.connect();
 
-function timeout(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+global.navigator = WMT;
 
 (async () => {
+  await JZZ({ engine: 'webmidi' });
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   page.on('console', msg => console.log(msg.text()));
-  await page.exposeFunction('WMT_requestMIDIAccess', (arg) => { return WMT.requestMIDIAccess(arg); });
-  page.evaluateOnNewDocument(() => { navigator.requestMIDIAccess = WMT_requestMIDIAccess; });
-
+  await JMH.enable(page);
+  await page.evaluateOnNewDocument(JZZcode);
+  await page.evaluateOnNewDocument('navigator.requestMIDIAccess = JZZ.requestMIDIAccess;');
   await page.goto(url);
-
-  await timeout(200);
-  await browser.close();
+  await page.waitForTimeout(1000);
+  await browser.close().catch();
 })();

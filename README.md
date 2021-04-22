@@ -46,6 +46,7 @@ import * as WMT from 'web-midi-test';
 
 #### With [JSDOM](https://github.com/jazz-soft/web-midi-test/tree/master/demo-jsdom)  
 #### With [Zombie.js](https://github.com/jazz-soft/web-midi-test/tree/master/demo-zombie)
+#### With [Puppeteer](https://github.com/jazz-soft/web-midi-test/tree/master/demo-puppeteer)
 
 ## API
 #### MIDI access
