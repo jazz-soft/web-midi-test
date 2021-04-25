@@ -9,7 +9,7 @@
     "test": "node index.js"
   },
   "dependencies": {
-    "jazz-midi-headless": "^0.0.4",
+    "jazz-midi-headless": "^0.0.5",
     "jzz": "^1.2.9",
     "puppeteer": "^8.0.0",
     "web-midi-test": "^1.1.4"

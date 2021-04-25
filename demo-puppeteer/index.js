@@ -3,7 +3,6 @@ const WMT =  require('web-midi-test');
 const JZZ = require('jzz');
 const JMH = require('jazz-midi-headless')(JZZ);
 const url = 'file://' + __dirname + '/test.html';
-const JZZcode = require('fs').readFileSync(__dirname + '/node_modules/jzz/javascript/JZZ.js', 'utf8');
 
 const midi_in1 = new WMT.MidiSrc('VIRTUAL MIDI-In 1');
 const midi_in2 = new WMT.MidiSrc('VIRTUAL MIDI-In 2');
@@ -22,8 +21,6 @@ global.navigator = WMT;
   const page = await browser.newPage();
   page.on('console', msg => console.log(msg.text()));
   await JMH.enable(page);
-  await page.evaluateOnNewDocument(JZZcode);
-  await page.evaluateOnNewDocument('navigator.requestMIDIAccess = JZZ.requestMIDIAccess;');
   await page.goto(url);
   await page.waitForTimeout(1000);
   await browser.close().catch();
