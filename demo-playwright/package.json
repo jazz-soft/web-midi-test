@@ -1,7 +1,7 @@
 {
-  "name": "demo-puppeteer",
+  "name": "demo-playwright",
   "version": "0.0.0",
-  "description": "Demo: Using web-midi-test with Puppeteer",
+  "description": "Demo: Using web-midi-test with Playwright",
   "main": "index.js",
   "author": "jazz-soft (http://jazz-soft.net/)",
   "license": "MIT",
@@ -11,7 +11,7 @@
   "dependencies": {
     "jazz-midi-headless": "^0.0.6",
     "jzz": "^1.2.9",
-    "puppeteer": "^9.0.0",
+    "playwright": "^1.10.0",
     "web-midi-test": "^1.1.4"
   },
   "private": true
