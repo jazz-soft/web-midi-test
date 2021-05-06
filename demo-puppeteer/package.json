@@ -11,7 +11,7 @@
   "dependencies": {
     "jazz-midi-headless": "^0.0.7",
     "jzz": "^1.3.0",
-    "puppeteer": "^9.1.0",
+    "puppeteer": "^9.1.1",
     "web-midi-test": "^1.1.5"
   },
   "private": true
