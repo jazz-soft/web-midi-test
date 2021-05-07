@@ -313,12 +313,12 @@
     });
     Object.defineProperty(this, 'onmidimessage', {
       get: function() { return _onmidimessage; },
-      set: function(f) { if (!_open) self.open().then(_noop, _noop); _onmidimessage = f instanceof Function ? f : null; },
+      set: function(f) { if (!_open) self.open().then(_noop, _noop); _onmidimessage = (typeof f== 'function') ? f : null; },
       enumerable: true
     });
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _onstatechange; },
-      set: function(f) { _onstatechange = f instanceof Function ? f : null; },
+      set: function(f) { _onstatechange = (typeof f== 'function') ? f : null; },
       enumerable: true
     });
     Object.freeze(this);
@@ -382,6 +382,7 @@
     _readonly(this, 'version', port.version);
     this.send = function(arr, t) {
       var data = _validate(arr, access.sysexEnabled);
+      if (port.busy) return;
       if (!port.connected) throw new DOMException('InvalidStateError', 'Port is not connected', 11);
       if (!_open) self.open().then(_noop, _noop);
       var i;
@@ -443,7 +444,7 @@
     });
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _onstatechange; },
-      set: function(f) { _onstatechange = f instanceof Function ? f : null; },
+      set: function(f) { _onstatechange = (typeof f== 'function') ? f : null; },
       enumerable: true
     });
     Object.freeze(this);
@@ -524,7 +525,7 @@
     this.outputs = new MIDIOutputMap(self, _outputs);
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _onstatechange; },
-      set: function(f) { _onstatechange = f instanceof Function ? f : null; },
+      set: function(f) { _onstatechange = (typeof f== 'function') ? f : null; },
       enumerable: true
     });
     Object.freeze(this);
