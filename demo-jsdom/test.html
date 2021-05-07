@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang=en>
 <head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
 <title>Web MIDI test</title>
 </head>
 
@@ -17,6 +19,7 @@ function onSuccess(midi) {
     console.log('MIDI Inputs:');
     midi.inputs.forEach(function(port) {
       console.log(' ', port.name);
+      port.onmidimessage = function(msg) { console.log(port.name, 'received:', msg.data.toString()); }
     });
   }
   else {
@@ -26,6 +29,7 @@ function onSuccess(midi) {
     console.log('MIDI Outputs:');
     midi.outputs.forEach(function(port) {
       console.log(' ', port.name);
+      port.send([0x90, 0x60, 0x7f]);
     });
   }
   else {
@@ -34,15 +38,11 @@ function onSuccess(midi) {
 }
 
 function onFail(err) {
-  console.log('Web MIDI does not work:', err.message);
+  console.log('Web MIDI does not work:', err);
 }
 
-try {
-  navigator.requestMIDIAccess().then(onSuccess, onFail);
-}
-catch (err) {
-  console.log('Web MIDI does not work:', err.message);
-}
+navigator.requestMIDIAccess().then(onSuccess, onFail);
+
 --></script>
 
 </body>
