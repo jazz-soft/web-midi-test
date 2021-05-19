@@ -22,8 +22,8 @@
     "@types/webmidi": "^2.0.4"
   },
   "devDependencies": {
-    "eslint": "^7.25.0",
-    "mocha": "^8.3.2",
+    "eslint": "^7.26.0",
+    "mocha": "^8.4.0",
     "nyc": "^15.1.0"
   },
   "runkitExampleFilename": "runkit.js",
