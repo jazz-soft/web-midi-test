@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "jazz-midi-headless": "^1.0.0",
-    "jzz": "^1.3.2",
-    "playwright": "^1.11.0",
+    "jzz": "^1.3.3",
+    "playwright": "^1.11.1",
     "web-midi-test": "^1.1.6"
   },
   "private": true
