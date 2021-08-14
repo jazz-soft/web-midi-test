@@ -1,6 +1,6 @@
 {
   "name": "web-midi-test",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Fake Web MIDI API for testing Web MIDI applications",
   "main": "wmt.js",
   "scripts": {
@@ -19,11 +19,11 @@
   ],
   "author": "jazz-soft (https://jazz-soft.net/)",
   "dependencies": {
-    "@types/webmidi": "^2.0.4"
+    "@types/webmidi": "^2.0.6"
   },
   "devDependencies": {
-    "eslint": "^7.28.0",
-    "mocha": "^9.0.0",
+    "eslint": "^7.32.0",
+    "mocha": "^9.0.3",
     "nyc": "^15.1.0"
   },
   "runkitExampleFilename": "runkit.js",
