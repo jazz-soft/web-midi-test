@@ -9,10 +9,10 @@
     "test": "node index.js"
   },
   "dependencies": {
-    "jazz-midi-headless": "^1.0.4",
-    "jzz": "^1.4.4",
-    "playwright": "^1.16.2",
-    "web-midi-test": "^1.1.9"
+    "jazz-midi-headless": "^1.0.5",
+    "jzz": "^1.4.7",
+    "playwright": "^1.18.1",
+    "web-midi-test": "^1.2.0"
   },
   "private": true
 }
