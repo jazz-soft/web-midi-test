@@ -9,7 +9,7 @@
     "test": "node index.js"
   },
   "dependencies": {
-    "web-midi-test": "^1.2.0",
+    "web-midi-test": "^1.2.1",
     "zombie": "^6.1.4"
   },
   "private": true
