@@ -9,9 +9,9 @@
     "test": "node index.js"
   },
   "dependencies": {
-    "jazz-midi-headless": "^1.1.0",
-    "jzz": "^1.6.0",
-    "puppeteer": "^19.7.2",
+    "jazz-midi-headless": "^1.1.1",
+    "jzz": "^1.7.0",
+    "puppeteer": "^21.3.4",
     "web-midi-test": "^1.2.4"
   },
   "private": true

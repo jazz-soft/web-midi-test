@@ -9,7 +9,7 @@
     "test": "node index.js"
   },
   "dependencies": {
-    "jsdom": "^21.1.0",
+    "jsdom": "^22.1.0",
     "web-midi-test": "^1.2.4"
   },
   "private": true
