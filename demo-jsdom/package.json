@@ -9,8 +9,8 @@
     "test": "node index.js"
   },
   "dependencies": {
-    "jsdom": "^23.2.0",
-    "web-midi-test": "^1.2.6"
+    "jsdom": "^24.0.0",
+    "web-midi-test": "^1.2.7"
   },
   "private": true
 }

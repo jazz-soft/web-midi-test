@@ -8,6 +8,9 @@ To see the demo, run:
 `npm install`  
 `npm test`
 
+Updating Playwright browsers:
+`npx playwright install`
+
 ## How it works
 This test creates three virtual MIDI-Out and three virtual MIDI-In ports.  
 Of those, one MIDI-In and one MIDI-Out port are set *busy*:  

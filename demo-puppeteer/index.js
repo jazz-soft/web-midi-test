@@ -27,6 +27,8 @@ midi_out3.receive = function(msg) { console.log('VIRTUAL MIDI-Out 3 received:', 
 
 global.navigator = WMT;
 
+function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
+
 (async () => {
   await JZZ({ engine: 'webmidi' });
   const browser = await puppeteer.launch();
@@ -34,10 +36,10 @@ global.navigator = WMT;
   page.on('console', msg => console.log('>>', msg.text()));
   await JMH.enable(page);
   await page.goto(url);
-  await page.waitForTimeout(500);
+  await sleep(500);
   midi_in1.emit([0x90, 0x60, 0x7f]);
   midi_in2.emit([0x90, 0x60, 0x7f]);
   midi_in3.emit([0x90, 0x60, 0x7f]);
-  await page.waitForTimeout(500);
+  await sleep(500);
   await browser.close().catch();
 })();
