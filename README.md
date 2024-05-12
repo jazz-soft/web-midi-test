@@ -21,7 +21,8 @@ Install: `npm install web-midi-test --save-dev`
 
 ```js
 var WMT = require('web-midi-test');
-var navigator = { requestMIDIAccess: WMT.requestMIDIAccess };
+navigator.requestMIDIAccess = WMT.requestMIDIAccess; // Node 22 and above, or
+var navigator = { requestMIDIAccess: WMT.requestMIDIAccess }; // older versions
 var performance = { now: WMT.now }; // if required...
 // ...
 ```

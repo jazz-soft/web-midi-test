@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "jazz-midi-headless": "^1.1.4",
-    "jzz": "^1.8.1",
-    "puppeteer": "^22.6.3",
-    "web-midi-test": "^1.2.7"
+    "jzz": "^1.8.2",
+    "puppeteer": "^22.8.0",
+    "web-midi-test": "^1.2.8"
   },
   "private": true
 }
