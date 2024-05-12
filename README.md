@@ -100,3 +100,6 @@ port.busy = false; // "another application" released the port
 //...
 port.disconnect();
 ```
+
+## Thanks for your support!
+[![Stargazers for @jazz-soft/web-midi-test](https://reporoster.com/stars/jazz-soft/web-midi-test)](https://github.com/jazz-soft/web-midi-test/stargazers)
