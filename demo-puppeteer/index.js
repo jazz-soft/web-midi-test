@@ -25,7 +25,12 @@ midi_out1.receive = function(msg) { console.log('VIRTUAL MIDI-Out 1 received:', 
 midi_out2.receive = function(msg) { console.log('VIRTUAL MIDI-Out 2 received:', msg); };
 midi_out3.receive = function(msg) { console.log('VIRTUAL MIDI-Out 3 received:', msg); };
 
-global.navigator = WMT;
+try { // Node 22 and above
+  navigator.requestMIDIAccess = WMT.requestMIDIAccess;
+}
+catch (e) { // older versions
+  global.navigator = WMT;
+}
 
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 
