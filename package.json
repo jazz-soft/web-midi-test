@@ -19,12 +19,12 @@
   ],
   "author": "jazz-soft (https://jazz-soft.net/)",
   "dependencies": {
-    "@types/webmidi": "^2.0.10"
+    "@types/webmidi": "^2.1.0"
   },
   "devDependencies": {
-    "eslint": "^9.2.0",
-    "mocha": "^10.4.0",
-    "nyc": "^15.1.0"
+    "eslint": "^9.23.0",
+    "mocha": "^11.1.0",
+    "nyc": "^17.1.0"
   },
   "runkitExampleFilename": "runkit.js",
   "repository": {
