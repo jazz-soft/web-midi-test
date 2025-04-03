@@ -2,4 +2,4 @@
 test*
 demo*
 coverage
-!test
+eslint.config.mjs
